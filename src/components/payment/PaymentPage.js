@@ -20,8 +20,9 @@ const PaymentPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [showTerms, setShowTerms] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
 
-  const testFee = 250;
+  const testFee = 750;
   const gst = Math.round(testFee * 0.18); // 18% GST
   const totalAmount = testFee + gst;
 
@@ -54,7 +55,7 @@ const PaymentPage = () => {
         amount: totalAmount * 100, // Amount in paise
         currency: 'INR',
         name: 'OnlyInternship.in',
-        description: 'Internship Assessment Test Fee',
+        description: 'Internship Assessment Test Fee - ₹750',
         image: '/logo.png',
         order_id: 'order_' + Date.now(),
         handler: function (response) {
@@ -90,12 +91,8 @@ const PaymentPage = () => {
 
   const handlePaymentSuccess = (response) => {
     setLoading(false);
-    toast.success('Payment successful! Test will be enabled shortly.');
-    
-    // Simulate admin approval delay
-    setTimeout(() => {
-      navigate('/student/dashboard');
-    }, 2000);
+    setPaymentCompleted(true);
+    toast.success('Payment successful! Please review the terms and conditions.');
   };
 
   const handlePaymentFailure = (error) => {
@@ -200,42 +197,81 @@ const PaymentPage = () => {
                 </div>
               </div>
 
-              {/* Terms and Conditions */}
-              <div className="mb-6">
-                <label className="flex items-start cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={acceptedTerms}
-                    onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="text-primary-dark mt-1 mr-3"
-                  />
-                  <div className="text-sm text-gray-700">
-                    I agree to the{' '}
-                    <button
-                      type="button"
-                      onClick={() => setShowTerms(true)}
-                      className="text-primary-dark hover:text-accent-red underline"
-                    >
-                      Terms & Conditions
-                    </button>
-                    {' '}and understand that the test fee is non-refundable once the test is initiated.
+              {/* Terms and Conditions - Hidden before payment */}
+              {!paymentCompleted && (
+                <div className="mb-6">
+                  <label className="flex items-start cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="text-primary-dark mt-1 mr-3"
+                    />
+                    <div className="text-sm text-gray-700">
+                      I agree to proceed with the payment of ₹{totalAmount} for the internship assessment test.
+                    </div>
+                  </label>
+                </div>
+              )}
+
+              {/* Post-Payment Terms and Conditions */}
+              {paymentCompleted && (
+                <div className="mb-6">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                    <h4 className="font-semibold text-yellow-800 mb-2">⚠️ IMPORTANT - POST-PAYMENT TERMS</h4>
+                    <div className="text-sm text-yellow-700 space-y-2">
+                      <p><strong>NO REFUNDS POLICY:</strong> The test fee of ₹750 is completely non-refundable once payment is completed.</p>
+                      <p><strong>Test Access:</strong> Your test will be enabled within 24 hours after admin approval.</p>
+                      <p><strong>Test Duration:</strong> 30 minutes for 35 questions. No extensions allowed.</p>
+                      <p><strong>Attempts:</strong> Maximum 3 attempts allowed per payment.</p>
+                    </div>
                   </div>
-                </label>
-              </div>
+                  <label className="flex items-start cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="text-primary-dark mt-1 mr-3"
+                    />
+                    <div className="text-sm text-gray-700">
+                      I have read and understood the{' '}
+                      <button
+                        type="button"
+                        onClick={() => setShowTerms(true)}
+                        className="text-primary-dark hover:text-accent-red underline"
+                      >
+                        complete Terms & Conditions
+                      </button>
+                      {' '}and accept that the test fee is non-refundable.
+                    </div>
+                  </label>
+                </div>
+              )}
 
               {/* Pay Button */}
-              <button
-                onClick={handlePayment}
-                disabled={loading || !acceptedTerms}
-                className="btn-primary w-full flex items-center justify-center py-4 text-lg"
-              >
-                {loading ? (
-                  <div className="spinner mr-2"></div>
-                ) : (
-                  <FaCreditCard className="mr-2" />
-                )}
-                {loading ? 'Processing...' : `Pay ₹${totalAmount}`}
-              </button>
+              {!paymentCompleted ? (
+                <button
+                  onClick={handlePayment}
+                  disabled={loading || !acceptedTerms}
+                  className="btn-primary w-full flex items-center justify-center py-4 text-lg"
+                >
+                  {loading ? (
+                    <div className="spinner mr-2"></div>
+                  ) : (
+                    <FaCreditCard className="mr-2" />
+                  )}
+                  {loading ? 'Processing...' : `Pay ₹${totalAmount}`}
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate('/student/dashboard')}
+                  disabled={!acceptedTerms}
+                  className="btn-primary w-full flex items-center justify-center py-4 text-lg"
+                >
+                  <FaCheckCircle className="mr-2" />
+                  {acceptedTerms ? 'Proceed to Dashboard' : 'Accept Terms to Continue'}
+                </button>
+              )}
             </div>
           </div>
 
@@ -282,16 +318,16 @@ const PaymentPage = () => {
               </div>
 
               {/* Refund Policy */}
-              <div className="card bg-yellow-50 border border-yellow-200">
+              <div className="card bg-red-50 border border-red-200">
                 <div className="flex items-start">
-                  <FaInfoCircle className="text-yellow-500 text-xl mr-3 mt-1" />
+                  <FaExclamationTriangle className="text-red-500 text-xl mr-3 mt-1" />
                   <div>
-                    <h3 className="text-lg font-semibold text-yellow-800 mb-2">Refund Policy</h3>
-                    <ul className="text-sm text-yellow-700 space-y-1">
-                      <li>• Non-refundable once test is initiated</li>
-                      <li>• Full refund if test cannot be started</li>
-                      <li>• Technical issues qualify for refund</li>
-                      <li>• Refund processed in 5-7 business days</li>
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">NO REFUNDS POLICY</h3>
+                    <ul className="text-sm text-red-700 space-y-1">
+                      <li>• Test fee of ₹750 is completely non-refundable</li>
+                      <li>• No refunds for failed attempts or time expiration</li>
+                      <li>• No refunds for technical issues during test</li>
+                      <li>• Payment is final once completed</li>
                     </ul>
                   </div>
                 </div>
@@ -326,19 +362,19 @@ const PaymentPage = () => {
               
               <div className="space-y-4 text-sm text-gray-700">
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-red-800 mb-2">⚠️ IMPORTANT - REFUND POLICY</h4>
+                  <h4 className="font-semibold text-red-800 mb-2">⚠️ IMPORTANT - NO REFUNDS POLICY</h4>
                   <ul className="text-red-700 space-y-1">
-                    <li>• Test fee is NON-REFUNDABLE once test is initiated</li>
-                    <li>• No refund for failed attempts or time expiration</li>
-                    <li>• Refund available only if test cannot be started</li>
-                    <li>• Technical issues must be reported immediately</li>
+                    <li>• Test fee of ₹750 is COMPLETELY NON-REFUNDABLE</li>
+                    <li>• No refunds for failed attempts or time expiration</li>
+                    <li>• No refunds for technical issues during test</li>
+                    <li>• Payment is final once completed</li>
                   </ul>
                 </div>
                 
                 <div>
                   <h4 className="font-semibold mb-2">Payment Terms:</h4>
                   <ul className="space-y-1">
-                    <li>• Amount: ₹250 + 18% GST = ₹295</li>
+                    <li>• Amount: ₹750 + 18% GST = ₹885</li>
                     <li>• Payment gateway: Razorpay (secure)</li>
                     <li>• Currency: Indian Rupees (INR)</li>
                     <li>• Invoice: Generated automatically</li>

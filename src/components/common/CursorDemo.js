@@ -1,206 +1,170 @@
 import React, { useState } from 'react';
-import useLoadingCursor from '../../hooks/useLoadingCursor';
-import YugaYatraLogo from './YugaYatraLogo';
+import CustomCursor from './CustomCursor';
+import { downloadMeritListAsCSV, downloadMeritListAsExcel, downloadMeritListAsJSON } from '../../utils/downloadUtils';
 
 const CursorDemo = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { startLoading, stopLoading, withLoading } = useLoadingCursor();
+  const [downloadStatus, setDownloadStatus] = useState('');
 
-  const handleLoadingDemo = async () => {
-    setIsLoading(true);
-    startLoading();
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    setIsLoading(false);
-    stopLoading();
-  };
+  // Sample merit list data for demo
+  const sampleMeritList = [
+    { id: 1, name: 'John Doe', email: 'john@example.com', bestScore: 95, percentile: 98, attempts: 1 },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', bestScore: 92, percentile: 96, attempts: 2 },
+    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', bestScore: 88, percentile: 92, attempts: 1 },
+    { id: 4, name: 'Sarah Wilson', email: 'sarah@example.com', bestScore: 85, percentile: 89, attempts: 3 },
+    { id: 5, name: 'David Brown', email: 'david@example.com', bestScore: 82, percentile: 85, attempts: 1 }
+  ];
 
-  const handleAsyncDemo = async () => {
-    await withLoading(async () => {
-      // Simulate async operation
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      alert('Async operation completed!');
-    });
+  const handleDownload = async (format) => {
+    setDownloadStatus('Downloading...');
+    try {
+      let result;
+      switch (format) {
+        case 'csv':
+          result = downloadMeritListAsCSV(sampleMeritList, 'demo-merit-list');
+          break;
+        case 'excel':
+          result = downloadMeritListAsExcel(sampleMeritList, 'demo-merit-list');
+          break;
+        case 'json':
+          result = downloadMeritListAsJSON(sampleMeritList, 'demo-merit-list');
+          break;
+        default:
+          result = downloadMeritListAsCSV(sampleMeritList, 'demo-merit-list');
+      }
+      
+      if (result.success) {
+        setDownloadStatus(result.message);
+        setTimeout(() => setDownloadStatus(''), 3000);
+      } else {
+        setDownloadStatus(result.message);
+        setTimeout(() => setDownloadStatus(''), 3000);
+      }
+    } catch (error) {
+      setDownloadStatus('Download failed');
+      setTimeout(() => setDownloadStatus(''), 3000);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+      <CustomCursor />
+      
+      <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Yuga Yatra Logo Cursor Demo
+            🎯 Custom Cursor & Download Demo
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Experience the custom cursor system featuring the exact Yuga Yatra logo with original colors, 
-            smooth animations, and interactive states.
+          <p className="text-lg text-gray-600">
+            Move your cursor around to see the custom cursor movement. Try downloading the sample merit list in different formats.
           </p>
         </div>
 
-        {/* Cursor Visibility Test */}
+        {/* Cursor Movement Demo */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">🎯 Cursor Visibility Test</h2>
-          <p className="text-gray-600 mb-4">
-            Move your mouse around this area. You should see the Yuga Yatra logo following your cursor.
-            If you can't see it, try refreshing the page or check the browser console for errors.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-100 p-4 rounded-lg text-center">
-              <p className="text-sm text-gray-600">Light Background</p>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Cursor Movement Demo</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-blue-50 p-6 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
+              <h3 className="font-semibold text-blue-800 mb-2">Interactive Element 1</h3>
+              <p className="text-blue-600">Hover over this to see cursor effects</p>
             </div>
-            <div className="bg-gray-800 p-4 rounded-lg text-center">
-              <p className="text-sm text-white">Dark Background</p>
+            <div className="bg-green-50 p-6 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
+              <h3 className="font-semibold text-green-800 mb-2">Interactive Element 2</h3>
+              <p className="text-green-600">Click to see cursor animation</p>
             </div>
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 rounded-lg text-center">
-              <p className="text-sm text-white">Gradient Background</p>
+            <div className="bg-purple-50 p-6 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
+              <h3 className="font-semibold text-purple-800 mb-2">Interactive Element 3</h3>
+              <p className="text-purple-600">Move cursor around this area</p>
             </div>
           </div>
         </div>
 
-        {/* Interactive Elements */}
+        {/* Download Demo */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">✨ Interactive Elements</h2>
-          <p className="text-gray-600 mb-6">
-            Hover over these elements to see the cursor change to a white-gold glow effect.
-          </p>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Download Functionality Demo</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Gold Gradient Buttons */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700">Gold Gradient Buttons</h3>
-              <button 
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                onClick={handleLoadingDemo}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Loading...' : 'Test Loading State'}
-              </button>
-              
-              <button 
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                onClick={handleAsyncDemo}
-              >
-                Async Operation
-              </button>
+          {downloadStatus && (
+            <div className="mb-4 p-4 bg-blue-100 text-blue-800 rounded-lg">
+              {downloadStatus}
             </div>
+          )}
 
-            {/* Links */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700">Interactive Links</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <button
+              onClick={() => handleDownload('csv')}
+              className="flex items-center justify-center p-4 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg transition-colors"
+            >
+              <span className="mr-2">📄</span>
+              Download as CSV
+            </button>
               <button 
-                className="block w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-center"
-                onClick={(e) => e.preventDefault()}
+              onClick={() => handleDownload('excel')}
+              className="flex items-center justify-center p-4 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg transition-colors"
               >
-                Clickable Link
+              <span className="mr-2">📊</span>
+              Download as Excel
               </button>
-              
               <button 
-                className="block w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-center"
-                onClick={(e) => e.preventDefault()}
+              onClick={() => handleDownload('json')}
+              className="flex items-center justify-center p-4 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg transition-colors"
               >
-                Another Link
+              <span className="mr-2">📋</span>
+              Download as JSON
               </button>
-            </div>
+          </div>
 
-            {/* Form Elements */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700">Form Elements</h3>
-              <input 
-                type="text" 
-                placeholder="Type here..." 
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300"
-              />
-              
-              <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300">
-                <option>Select an option</option>
-                <option>Option 1</option>
-                <option>Option 2</option>
-                <option>Option 3</option>
-              </select>
+          {/* Sample Merit List Display */}
+          <div className="bg-gray-50 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Sample Merit List Data</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-2 px-4 font-medium text-gray-700">Rank</th>
+                    <th className="text-left py-2 px-4 font-medium text-gray-700">Name</th>
+                    <th className="text-left py-2 px-4 font-medium text-gray-700">Email</th>
+                    <th className="text-left py-2 px-4 font-medium text-gray-700">Score</th>
+                    <th className="text-left py-2 px-4 font-medium text-gray-700">Percentile</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sampleMeritList.map((candidate, index) => (
+                    <tr key={candidate.id} className="border-b border-gray-100 hover:bg-blue-50">
+                      <td className="py-2 px-4 font-bold text-blue-600">#{index + 1}</td>
+                      <td className="py-2 px-4 font-medium">{candidate.name}</td>
+                      <td className="py-2 px-4 text-gray-600">{candidate.email}</td>
+                      <td className="py-2 px-4 font-medium text-green-600">{candidate.bestScore}%</td>
+                      <td className="py-2 px-4 font-bold text-red-600">P{candidate.percentile}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        {/* Logo Showcase */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">🎨 Logo Showcase</h2>
-          <p className="text-gray-600 mb-6">
-            Different states and sizes of the Yuga Yatra logo cursor.
-          </p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="bg-gray-100 p-4 rounded-lg mb-2">
-                <YugaYatraLogo size={48} preserveOriginal={true} />
-              </div>
-              <p className="text-sm text-gray-600">Default (32x32)</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-gray-100 p-4 rounded-lg mb-2">
-                <YugaYatraLogo size={48} preserveOriginal={true} animated={true} />
-              </div>
-              <p className="text-sm text-gray-600">Animated</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-gray-100 p-4 rounded-lg mb-2">
-                <YugaYatraLogo size={48} preserveOriginal={true} loading={true} />
-              </div>
-              <p className="text-sm text-gray-600">Loading State</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-gray-100 p-4 rounded-lg mb-2">
-                <YugaYatraLogo size={48} color="#FFD700" preserveOriginal={false} />
-              </div>
-              <p className="text-sm text-gray-600">Custom Color</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Technical Details */}
+        {/* Features List */}
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">🔧 Technical Details</h2>
-          
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Features Implemented</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">Features</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">🎯 Custom Cursor Movement</h3>
               <ul className="space-y-2 text-gray-600">
-                <li>• Exact Yuga Yatra logo with original colors</li>
-                <li>• 32x32 cursor size with proper scaling</li>
-                <li>• White-gold glow on interactive elements</li>
-                <li>• Gold gradient button styling</li>
-                <li>• Loading state with gold spinner</li>
-                <li>• Smooth transitions and animations</li>
-                <li>• SVG-based for crisp scaling</li>
-                <li>• Accessibility support</li>
+                <li>• Smooth cursor tracking with visual feedback</li>
+                <li>• Cursor trail effect for enhanced visibility</li>
+                <li>• Click animations and hover effects</li>
+                <li>• Responsive design that works on all screen sizes</li>
               </ul>
             </div>
-            
             <div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">States</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">📥 Download Functionality</h3>
               <ul className="space-y-2 text-gray-600">
-                <li>• <strong>Default:</strong> Gold logo with subtle shadow</li>
-                <li>• <strong>Hover:</strong> White-gold glow effect</li>
-                <li>• <strong>Loading:</strong> Spinning gold animation</li>
-                <li>• <strong>Clicking:</strong> Compressed with enhanced glow</li>
-                <li>• <strong>Text:</strong> Gold vertical line for text inputs</li>
-                <li>• <strong>Disabled:</strong> Grayscale with reduced opacity</li>
+                <li>• Multiple format support (CSV, Excel, JSON)</li>
+                <li>• Automatic file naming with timestamps</li>
+                <li>• Progress indicators and success/error messages</li>
+                <li>• Direct download to system with proper file extensions</li>
               </ul>
             </div>
           </div>
-        </div>
-
-        {/* Debug Info */}
-        <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="text-lg font-semibold text-yellow-800 mb-2">🐛 Debug Information</h3>
-          <p className="text-yellow-700 text-sm">
-            If you can't see the cursor: Check browser console for errors, ensure JavaScript is enabled, 
-            and verify you're not on a touch device. The cursor is hidden on mobile/touch devices.
-          </p>
         </div>
       </div>
     </div>

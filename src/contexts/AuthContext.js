@@ -144,12 +144,12 @@ export const AuthProvider = ({ children }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, accept admin/admin
-      if (username === 'admin' && password === 'admin') {
+      // Admin authentication with credentials: Admin/Admin
+      if (username === 'Admin' && password === 'Admin') {
         const user = {
           id: 'admin_1',
-          username: 'admin',
-          name: 'Admin User',
+          username: 'Admin',
+          name: 'Administrator',
           role: 'admin',
         };
         
