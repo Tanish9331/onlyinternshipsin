@@ -46,6 +46,9 @@ const AdminLogin = () => {
           <p className="text-gray-600">
             Access the admin dashboard to manage tests and candidates
           </p>
+          <div className="mt-2 text-xs text-gray-500">
+            <p>Demo: Username and Password are both "Admin"</p>
+          </div>
         </div>
 
         {/* Form */}
@@ -108,14 +111,7 @@ const AdminLogin = () => {
           </form>
         </div>
 
-        {/* Demo Credentials */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-yellow-800 mb-2">Demo Credentials</h3>
-          <div className="text-xs text-yellow-700 space-y-1">
-            <p><strong>Username:</strong> admin</p>
-            <p><strong>Password:</strong> admin</p>
-          </div>
-        </div>
+
 
         {/* Security Notice */}
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">

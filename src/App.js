@@ -21,9 +21,6 @@ import TermsAndConditions from './components/common/TermsAndConditions';
 import PaymentPage from './components/payment/PaymentPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import CustomCursor from './components/common/CustomCursor';
-import CursorDemo from './components/common/CursorDemo';
-import CursorTest from './components/common/CursorTest';
-import SimpleCursorTest from './components/common/SimpleCursorTest';
 
 // Styles
 import './index.css';
@@ -33,14 +30,11 @@ function App() {
     <Router>
       <AuthProvider>
         <TestProvider>
-          <div className="App min-h-screen bg-light-bg font-poppins">
+          <div className="App min-h-screen bg-gradient-to-br from-amber-50 to-yellow-100 font-poppins">
             <CustomCursor />
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
-              <Route path="/cursor-demo" element={<CursorDemo />} />
-              <Route path="/cursor-test" element={<CursorTest />} />
-              <Route path="/simple-test" element={<SimpleCursorTest />} />
               <Route path="/student/login" element={<StudentLogin />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/terms" element={<TermsAgreement />} />

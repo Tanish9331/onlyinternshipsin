@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaGraduationCap, FaUserShield, FaClock } from 'react-icons/fa';
+import { FaGraduationCap, FaUserShield, FaClock, FaBars, FaTimes } from 'react-icons/fa';
 import { MdPayment } from 'react-icons/md';
 import YugaYatraLogo from './common/YugaYatraLogo';
 
 const HomePage = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header - Fixed across all pages */}
@@ -15,6 +21,8 @@ const HomePage = () => {
               {/* Yuga Yatra Logo */}
               <YugaYatraLogo className="w-16 h-16" showText={true} />
             </div>
+            
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
               <Link to="/" className="text-gray-700 hover:text-gold-600 transition-colors font-medium">
                 Home
@@ -29,7 +37,58 @@ const HomePage = () => {
                 Admin Login
               </Link>
             </nav>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button
+                onClick={toggleMobileMenu}
+                className="text-gray-700 hover:text-gold-600 focus:outline-none focus:text-gold-600 transition-colors"
+                aria-label="Toggle mobile menu"
+              >
+                {isMobileMenuOpen ? (
+                  <FaTimes className="h-6 w-6" />
+                ) : (
+                  <FaBars className="h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden">
+              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gold-200 shadow-lg">
+                <Link 
+                  to="/" 
+                  className="block px-3 py-2 text-gray-700 hover:text-gold-600 hover:bg-gold-50 transition-colors font-medium rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link 
+                  to="/terms-conditions" 
+                  className="block px-3 py-2 text-gray-700 hover:text-gold-600 hover:bg-gold-50 transition-colors font-medium rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Terms & Conditions
+                </Link>
+                <Link 
+                  to="/student/login" 
+                  className="block px-3 py-2 text-gray-700 hover:text-gold-600 hover:bg-gold-50 transition-colors font-medium rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Student Login
+                </Link>
+                <Link 
+                  to="/admin/login" 
+                  className="block px-3 py-2 text-gray-700 hover:text-gold-600 hover:bg-gold-50 transition-colors font-medium rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Admin Login
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 

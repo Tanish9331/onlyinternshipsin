@@ -1,43 +1,50 @@
-# Online Internship Test Platform
+# Online Internship Platform
 
-A modern, full-stack web application for conducting online internship assessments with secure proctoring and instant results.
+A comprehensive web-based platform for managing internships, tests, and student evaluations.
 
 ## 🚀 Features
 
-- **Custom Cursor System**: Beautiful Yuga Yatra branded cursor with smooth animations
-- **Secure Testing**: Proctored online assessments with real-time monitoring
-- **Instant Results**: Automated scoring and merit-based rankings
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Admin Dashboard**: Comprehensive admin panel for test management
-- **Student Portal**: User-friendly interface for test takers
+- **Student Portal**: Take tests, view results, and manage profile
+- **Admin Dashboard**: Create tests, manage students, and view analytics
+- **Payment Integration**: Secure payment processing with Razorpay
+- **Anti-Cheating System**: Advanced cursor tracking and monitoring
+- **Real-time Testing**: Live test interface with timer
+- **Email Notifications**: Automated email services for results and updates
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React.js** - Modern UI framework
-- **Tailwind CSS** - Utility-first CSS framework
-- **React Router** - Client-side routing
-- **React Icons** - Beautiful icon library
+- **Frontend**: React.js, Tailwind CSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Payment**: Razorpay
+- **Email**: SMTP/Nodemailer
+- **Authentication**: JWT
 
-### Backend
-- **Node.js** - Server-side JavaScript runtime
-- **Express.js** - Web application framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - MongoDB object modeling
+## 📁 Project Structure
 
-### Custom Features
-- **Custom Cursor**: Yuga Yatra branded cursor with hover effects
-- **Loading States**: Smooth loading animations
-- **Responsive Design**: Mobile-first approach
+```
+src/
+├── components/
+│   ├── admin/          # Admin dashboard components
+│   ├── auth/           # Authentication components
+│   ├── common/         # Shared components
+│   ├── payment/        # Payment related components
+│   ├── student/        # Student dashboard components
+│   └── test/           # Test interface components
+├── contexts/           # React contexts
+├── hooks/              # Custom React hooks
+├── styles/             # CSS styles
+└── utils/              # Utility functions
+```
 
-## 📦 Installation
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v14 or higher)
 - MongoDB
 - Git
 
-### Setup Instructions
+### Installation
 
 1. **Clone the repository**
    ```bash
@@ -50,128 +57,84 @@ A modern, full-stack web application for conducting online internship assessment
    npm install
    cd backend
    npm install
-   cd ..
    ```
 
-3. **Environment setup**
-   ```bash
-   # Create .env file in root directory
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+3. **Environment Setup**
+   - Create `.env` file in backend directory
+   - Add your MongoDB connection string
+   - Configure Razorpay credentials
+   - Set up SMTP settings
 
-4. **Start the application**
+4. **Run the application**
    ```bash
-   # Start frontend (port 3000)
-   npm start
-   
-   # Start backend (port 5000)
+   # Start backend server
    cd backend
    npm start
+   
+   # Start frontend (in new terminal)
+   npm start
    ```
-
-## 🎯 Custom Cursor Features
-
-The application includes a sophisticated custom cursor system:
-
-- **Default State**: Gold Yuga Yatra logo (32x32px)
-- **Hover State**: White-glow version (28x28px)
-- **Loading State**: Spinning gold animation
-- **Smooth Transitions**: Cubic-bezier easing
-- **Cross-browser Support**: Works on all modern browsers
-
-### Test the Cursor
-- **Simple Test**: `http://localhost:3000/simple-test`
-- **Full Demo**: `http://localhost:3000/cursor-demo`
-- **Main App**: `http://localhost:3000/`
-
-## 📁 Project Structure
-
-```
-online-internship-platform/
-├── src/
-│   ├── components/
-│   │   ├── common/
-│   │   │   ├── CustomCursor.js
-│   │   │   ├── YugaYatraLogo.js
-│   │   │   └── CursorDemo.js
-│   │   ├── admin/
-│   │   ├── student/
-│   │   └── payment/
-│   ├── styles/
-│   │   └── cursor.css
-│   ├── hooks/
-│   │   └── useLoadingCursor.js
-│   └── utils/
-│       └── cursorUtils.js
-├── backend/
-│   ├── models/
-│   ├── routes/
-│   └── server.js
-├── public/
-└── package.json
-```
 
 ## 🔧 Configuration
 
-### Environment Variables
-```env
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-PORT=5000
-```
+### Backend Configuration
+- MongoDB connection
+- JWT secret key
+- Razorpay API keys
+- SMTP settings for email
 
-### Custom Cursor Configuration
-The cursor can be customized in `src/styles/cursor.css`:
-- Colors and branding
-- Animation timing
-- Hover effects
-- Loading states
+### Frontend Configuration
+- API endpoints
+- Payment gateway settings
+- Anti-cheating parameters
 
-## 🚀 Deployment
+## 📱 Usage
 
-### Frontend (React)
-```bash
-npm run build
-# Deploy build/ folder to your hosting service
-```
+### For Students
+1. Register/Login to student portal
+2. Browse available tests
+3. Complete payment for test access
+4. Take the test with anti-cheating monitoring
+5. View results and certificates
 
-### Backend (Node.js)
-```bash
-cd backend
-npm start
-# Deploy to your server or cloud platform
-```
+### For Admins
+1. Login to admin dashboard
+2. Create and manage tests
+3. Monitor student activities
+4. View analytics and reports
+5. Manage user accounts
+
+## 🔒 Security Features
+
+- **Anti-Cheating**: Real-time cursor tracking
+- **Session Management**: Secure authentication
+- **Payment Security**: Encrypted payment processing
+- **Data Protection**: Secure data transmission
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-**Ruchitha Mula**
+**Ruchithamula**
 - GitHub: [@Ruchithamula](https://github.com/Ruchithamula)
 
 ## 🙏 Acknowledgments
 
-- Yuga Yatra Retail for branding and design inspiration
-- React and Node.js communities for excellent documentation
-- Tailwind CSS for the amazing utility-first framework
-
-## 📞 Support
-
-For support and questions:
-- Create an issue on GitHub
-- Contact: [Your Email]
+- React.js community
+- Tailwind CSS team
+- Razorpay for payment integration
+- MongoDB for database solutions
 
 ---
 
-**Made with ❤️ by Ruchitha Mula** 
+⭐ Star this repository if you find it helpful! 
