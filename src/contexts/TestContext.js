@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 import toast from 'react-hot-toast';
 
 const TestContext = createContext();
@@ -106,297 +106,332 @@ const testReducer = (state, action) => {
   }
 };
 
-// Sample questions database
+// Web Development Questions Database
 const sampleQuestions = [
-  // Easy Questions (33%)
+  // Easy Questions (20 questions)
   {
     id: 1,
-    question: "What is the capital of India?",
-    options: ["Mumbai", "Delhi", "Kolkata", "Chennai"],
-    correctAnswer: 1,
+    question: "What does HTML stand for?",
+    options: ["Hyper Trainer Marking Language", "Hyper Text Marketing Language", "Hyper Text Markup Language", "Hyper Text Main Language"],
+    correctAnswer: 2,
     difficulty: "easy",
-    category: "General Knowledge"
+    category: "HTML"
   },
   {
     id: 2,
-    question: "Which planet is known as the Red Planet?",
-    options: ["Earth", "Mars", "Jupiter", "Venus"],
-    correctAnswer: 1,
+    question: "Which tag is used to create a hyperlink in HTML?",
+    options: ["<link>", "<href>", "<a>", "<hyperlink>"],
+    correctAnswer: 2,
     difficulty: "easy",
-    category: "Science"
+    category: "HTML"
   },
   {
     id: 3,
-    question: "What is 2 + 2?",
-    options: ["3", "4", "5", "6"],
-    correctAnswer: 1,
+    question: "Which property is used in CSS to change the text color of an element?",
+    options: ["font-style", "text-color", "color", "text-style"],
+    correctAnswer: 2,
     difficulty: "easy",
-    category: "Mathematics"
+    category: "CSS"
   },
   {
     id: 4,
-    question: "Who wrote 'Romeo and Juliet'?",
-    options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
-    correctAnswer: 1,
+    question: "Which HTML element is used for inserting a line break?",
+    options: ["<br>", "<lb>", "<break>", "<newline>"],
+    correctAnswer: 0,
     difficulty: "easy",
-    category: "Literature"
+    category: "HTML"
   },
   {
     id: 5,
-    question: "What is the largest ocean on Earth?",
-    options: ["Atlantic", "Indian", "Arctic", "Pacific"],
-    correctAnswer: 3,
+    question: "What does CSS stand for?",
+    options: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style System", "Colorful Style Sheets"],
+    correctAnswer: 0,
     difficulty: "easy",
-    category: "Geography"
+    category: "CSS"
   },
   {
     id: 6,
-    question: "Which year did India gain independence?",
-    options: ["1945", "1946", "1947", "1948"],
+    question: "Which tag is used to create a hyperlink in HTML?",
+    options: ["<link>", "<href>", "<a>", "<hyperlink>"],
     correctAnswer: 2,
     difficulty: "easy",
-    category: "History"
+    category: "HTML"
   },
   {
     id: 7,
-    question: "What is the chemical symbol for gold?",
-    options: ["Ag", "Au", "Fe", "Cu"],
-    correctAnswer: 1,
+    question: "Which property is used in CSS to change the text color of an element?",
+    options: ["font-style", "text-color", "color", "text-style"],
+    correctAnswer: 2,
     difficulty: "easy",
-    category: "Science"
+    category: "CSS"
   },
   {
     id: 8,
-    question: "How many sides does a triangle have?",
-    options: ["2", "3", "4", "5"],
-    correctAnswer: 1,
+    question: "Which HTML element is used for inserting a line break?",
+    options: ["<br>", "<lb>", "<break>", "<newline>"],
+    correctAnswer: 0,
     difficulty: "easy",
-    category: "Mathematics"
+    category: "HTML"
   },
   {
     id: 9,
-    question: "Which is the largest mammal?",
-    options: ["Elephant", "Blue Whale", "Giraffe", "Polar Bear"],
-    correctAnswer: 1,
+    question: "What does CSS stand for?",
+    options: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style System", "Colorful Style Sheets"],
+    correctAnswer: 0,
     difficulty: "easy",
-    category: "Biology"
+    category: "CSS"
   },
   {
     id: 10,
-    question: "What is the main component of the sun?",
-    options: ["Liquid Lava", "Molten Iron", "Hot Gases", "Solid Rock"],
+    question: "What does HTML stand for?",
+    options: ["Hyper Trainer Marking Language", "Hyper Text Marketing Language", "Hyper Text Markup Language", "Hyper Text Main Language"],
     correctAnswer: 2,
     difficulty: "easy",
-    category: "Science"
+    category: "HTML"
   },
   {
     id: 11,
-    question: "Which country is home to the kangaroo?",
-    options: ["New Zealand", "South Africa", "Australia", "India"],
+    question: "Which tag is used to create a hyperlink in HTML?",
+    options: ["<link>", "<href>", "<a>", "<hyperlink>"],
     correctAnswer: 2,
     difficulty: "easy",
-    category: "Geography"
+    category: "HTML"
   },
   {
     id: 12,
-    question: "What is the square root of 16?",
-    options: ["2", "4", "8", "16"],
-    correctAnswer: 1,
+    question: "Which property is used in CSS to change the text color of an element?",
+    options: ["font-style", "text-color", "color", "text-style"],
+    correctAnswer: 2,
     difficulty: "easy",
-    category: "Mathematics"
+    category: "CSS"
   },
-  
-  // Moderate Questions (34%)
   {
     id: 13,
-    question: "What is the process by which plants make their own food?",
-    options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"],
-    correctAnswer: 1,
-    difficulty: "moderate",
-    category: "Biology"
+    question: "Which HTML element is used for inserting a line break?",
+    options: ["<br>", "<lb>", "<break>", "<newline>"],
+    correctAnswer: 0,
+    difficulty: "easy",
+    category: "HTML"
   },
   {
     id: 14,
-    question: "Which programming language is known as the 'language of the web'?",
-    options: ["Python", "Java", "JavaScript", "C++"],
-    correctAnswer: 2,
-    difficulty: "moderate",
-    category: "Computer Science"
+    question: "What does CSS stand for?",
+    options: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style System", "Colorful Style Sheets"],
+    correctAnswer: 0,
+    difficulty: "easy",
+    category: "CSS"
   },
   {
     id: 15,
-    question: "What is the largest organ in the human body?",
-    options: ["Heart", "Brain", "Liver", "Skin"],
-    correctAnswer: 3,
-    difficulty: "moderate",
-    category: "Biology"
+    question: "What does HTML stand for?",
+    options: ["Hyper Trainer Marking Language", "Hyper Text Marketing Language", "Hyper Text Markup Language", "Hyper Text Main Language"],
+    correctAnswer: 2,
+    difficulty: "easy",
+    category: "HTML"
   },
   {
     id: 16,
-    question: "Which of these is a primary color?",
-    options: ["Green", "Purple", "Red", "Orange"],
+    question: "Which tag is used to create a hyperlink in HTML?",
+    options: ["<link>", "<href>", "<a>", "<hyperlink>"],
     correctAnswer: 2,
-    difficulty: "moderate",
-    category: "Art"
+    difficulty: "easy",
+    category: "HTML"
   },
   {
     id: 17,
-    question: "What is the speed of light?",
-    options: ["299,792 km/s", "199,792 km/s", "399,792 km/s", "499,792 km/s"],
-    correctAnswer: 0,
-    difficulty: "moderate",
-    category: "Physics"
+    question: "Which property is used in CSS to change the text color of an element?",
+    options: ["font-style", "text-color", "color", "text-style"],
+    correctAnswer: 2,
+    difficulty: "easy",
+    category: "CSS"
   },
   {
     id: 18,
-    question: "Which planet has the most moons?",
-    options: ["Jupiter", "Saturn", "Uranus", "Neptune"],
-    correctAnswer: 1,
-    difficulty: "moderate",
-    category: "Astronomy"
+    question: "Which HTML element is used for inserting a line break?",
+    options: ["<br>", "<lb>", "<break>", "<newline>"],
+    correctAnswer: 0,
+    difficulty: "easy",
+    category: "HTML"
   },
   {
     id: 19,
-    question: "What is the chemical formula for water?",
-    options: ["H2O", "CO2", "O2", "N2"],
+    question: "What does CSS stand for?",
+    options: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style System", "Colorful Style Sheets"],
     correctAnswer: 0,
-    difficulty: "moderate",
-    category: "Chemistry"
+    difficulty: "easy",
+    category: "CSS"
   },
   {
     id: 20,
-    question: "Which year did World War II end?",
-    options: ["1943", "1944", "1945", "1946"],
+    question: "What does HTML stand for?",
+    options: ["Hyper Trainer Marking Language", "Hyper Text Marketing Language", "Hyper Text Markup Language", "Hyper Text Main Language"],
     correctAnswer: 2,
-    difficulty: "moderate",
-    category: "History"
+    difficulty: "easy",
+    category: "HTML"
   },
+  
+  // Medium Questions (10 questions)
   {
     id: 21,
-    question: "What is the capital of Japan?",
-    options: ["Kyoto", "Osaka", "Tokyo", "Yokohama"],
-    correctAnswer: 2,
+    question: "Which CSS property controls the text size?",
+    options: ["font-size", "text-size", "font-style", "text-style"],
+    correctAnswer: 0,
     difficulty: "moderate",
-    category: "Geography"
+    category: "CSS"
   },
   {
     id: 22,
-    question: "Which element has the chemical symbol 'O'?",
-    options: ["Osmium", "Oxygen", "Oganesson", "Osmium"],
-    correctAnswer: 1,
+    question: "Which HTML tag is used to define an internal style sheet?",
+    options: ["<style>", "<css>", "<script>", "<link>"],
+    correctAnswer: 0,
     difficulty: "moderate",
-    category: "Chemistry"
+    category: "HTML"
   },
   {
     id: 23,
-    question: "What is the largest desert in the world?",
-    options: ["Gobi", "Sahara", "Arabian", "Antarctic"],
+    question: "In JavaScript, which keyword is used to declare a variable?",
+    options: ["var", "let", "const", "All of the above"],
     correctAnswer: 3,
     difficulty: "moderate",
-    category: "Geography"
+    category: "JavaScript"
   },
   {
     id: 24,
-    question: "Which is the smallest prime number?",
-    options: ["0", "1", "2", "3"],
+    question: "Which CSS property is used to make text bold?",
+    options: ["font-style", "text-decoration", "font-weight", "text-style"],
     correctAnswer: 2,
     difficulty: "moderate",
-    category: "Mathematics"
+    category: "CSS"
   },
-  
-  // Expert Questions (33%)
   {
     id: 25,
-    question: "What is the Heisenberg Uncertainty Principle?",
-    options: [
-      "You cannot simultaneously know the position and momentum of a particle",
-      "Energy cannot be created or destroyed",
-      "Every action has an equal and opposite reaction",
-      "Light travels in straight lines"
-    ],
-    correctAnswer: 0,
-    difficulty: "expert",
-    category: "Physics"
+    question: "What does the 'z-index' property in CSS control?",
+    options: ["Zoom level", "Stacking order", "Color saturation", "Image resolution"],
+    correctAnswer: 1,
+    difficulty: "moderate",
+    category: "CSS"
   },
   {
     id: 26,
-    question: "Which algorithm is used for sorting with O(n log n) average time complexity?",
-    options: ["Bubble Sort", "Quick Sort", "Selection Sort", "Insertion Sort"],
-    correctAnswer: 1,
-    difficulty: "expert",
-    category: "Computer Science"
+    question: "Which CSS property controls the text size?",
+    options: ["font-size", "text-size", "font-style", "text-style"],
+    correctAnswer: 0,
+    difficulty: "moderate",
+    category: "CSS"
   },
   {
     id: 27,
-    question: "What is the molecular structure of DNA?",
-    options: ["Single helix", "Double helix", "Triple helix", "Quadruple helix"],
-    correctAnswer: 1,
-    difficulty: "expert",
-    category: "Biology"
+    question: "Which HTML tag is used to define an internal style sheet?",
+    options: ["<style>", "<css>", "<script>", "<link>"],
+    correctAnswer: 0,
+    difficulty: "moderate",
+    category: "HTML"
   },
   {
     id: 28,
-    question: "Which theorem states that no three positive integers a, b, and c satisfy the equation a^n + b^n = c^n for any integer value of n greater than 2?",
-    options: ["Pythagorean Theorem", "Fermat's Last Theorem", "Euler's Theorem", "Wilson's Theorem"],
-    correctAnswer: 1,
-    difficulty: "expert",
-    category: "Mathematics"
+    question: "In JavaScript, which keyword is used to declare a variable?",
+    options: ["var", "let", "const", "All of the above"],
+    correctAnswer: 3,
+    difficulty: "moderate",
+    category: "JavaScript"
   },
   {
     id: 29,
-    question: "What is the process of converting analog signals to digital called?",
-    options: ["Modulation", "Demodulation", "Quantization", "Sampling"],
+    question: "Which CSS property is used to make text bold?",
+    options: ["font-style", "text-decoration", "font-weight", "text-style"],
     correctAnswer: 2,
-    difficulty: "expert",
-    category: "Electronics"
+    difficulty: "moderate",
+    category: "CSS"
   },
   {
     id: 30,
-    question: "Which programming paradigm emphasizes immutability and pure functions?",
-    options: ["Object-Oriented", "Functional", "Procedural", "Imperative"],
+    question: "What does the 'z-index' property in CSS control?",
+    options: ["Zoom level", "Stacking order", "Color saturation", "Image resolution"],
     correctAnswer: 1,
-    difficulty: "expert",
-    category: "Computer Science"
+    difficulty: "moderate",
+    category: "CSS"
   },
+  
+  // Hard Questions (10 questions)
   {
     id: 31,
-    question: "What is the name of the enzyme that breaks down lactose?",
-    options: ["Amylase", "Lactase", "Protease", "Lipase"],
-    correctAnswer: 1,
+    question: "Which of the following is true about semantic HTML?",
+    options: ["It uses tags for styling only", "It has no effect on SEO", "It provides meaning to the web page structure", "It is deprecated in HTML5"],
+    correctAnswer: 2,
     difficulty: "expert",
-    category: "Biology"
+    category: "HTML"
   },
   {
     id: 32,
-    question: "Which of these is NOT a valid HTTP status code?",
-    options: ["200", "404", "500", "999"],
-    correctAnswer: 3,
+    question: "Which method is used in JavaScript to attach an event to an element?",
+    options: ["addEvent()", "attachEvent()", "addEventListener()", "bindEvent()"],
+    correctAnswer: 2,
     difficulty: "expert",
-    category: "Computer Science"
+    category: "JavaScript"
   },
   {
     id: 33,
-    question: "What is the chemical name for table salt?",
-    options: ["Sodium chloride", "Potassium chloride", "Calcium chloride", "Magnesium chloride"],
-    correctAnswer: 0,
+    question: "What does the 'viewport' meta tag in HTML control?",
+    options: ["Image rendering", "Mobile responsiveness", "Font type", "JavaScript execution"],
+    correctAnswer: 1,
     difficulty: "expert",
-    category: "Chemistry"
+    category: "HTML"
   },
   {
     id: 34,
-    question: "Which planet has the highest surface temperature?",
-    options: ["Mercury", "Venus", "Earth", "Mars"],
-    correctAnswer: 1,
+    question: "Which of the following CSS units is relative to the root element?",
+    options: ["em", "px", "rem", "%"],
+    correctAnswer: 2,
     difficulty: "expert",
-    category: "Astronomy"
+    category: "CSS"
   },
   {
     id: 35,
-    question: "What is the largest known prime number as of 2024?",
-    options: ["2^82,589,933 - 1", "2^77,232,917 - 1", "2^74,207,281 - 1", "2^57,885,161 - 1"],
+    question: "Which ARIA attribute is used to describe a live region in HTML?",
+    options: ["aria-live", "aria-region", "aria-status", "aria-role"],
     correctAnswer: 0,
     difficulty: "expert",
-    category: "Mathematics"
+    category: "HTML"
+  },
+  {
+    id: 36,
+    question: "Which of the following is true about semantic HTML?",
+    options: ["It uses tags for styling only", "It has no effect on SEO", "It provides meaning to the web page structure", "It is deprecated in HTML5"],
+    correctAnswer: 2,
+    difficulty: "expert",
+    category: "HTML"
+  },
+  {
+    id: 37,
+    question: "Which method is used in JavaScript to attach an event to an element?",
+    options: ["addEvent()", "attachEvent()", "addEventListener()", "bindEvent()"],
+    correctAnswer: 2,
+    difficulty: "expert",
+    category: "JavaScript"
+  },
+  {
+    id: 38,
+    question: "What does the 'viewport' meta tag in HTML control?",
+    options: ["Image rendering", "Mobile responsiveness", "Font type", "JavaScript execution"],
+    correctAnswer: 1,
+    difficulty: "expert",
+    category: "HTML"
+  },
+  {
+    id: 39,
+    question: "Which of the following CSS units is relative to the root element?",
+    options: ["em", "px", "rem", "%"],
+    correctAnswer: 2,
+    difficulty: "expert",
+    category: "CSS"
+  },
+  {
+    id: 40,
+    question: "Which ARIA attribute is used to describe a live region in HTML?",
+    options: ["aria-live", "aria-region", "aria-status", "aria-role"],
+    correctAnswer: 0,
+    difficulty: "expert",
+    category: "HTML"
   }
 ];
 
@@ -410,14 +445,16 @@ export const TestProvider = ({ children }) => {
     const expertQuestions = sampleQuestions.filter(q => q.difficulty === 'expert');
 
     // Select random questions based on difficulty distribution
-    const selectedEasy = easyQuestions.sort(() => 0.5 - Math.random()).slice(0, 12);
-    const selectedModerate = moderateQuestions.sort(() => 0.5 - Math.random()).slice(0, 12);
-    const selectedExpert = expertQuestions.sort(() => 0.5 - Math.random()).slice(0, 11);
+    // 20 easy questions (50%), 10 moderate (25%), 10 expert (25%)
+    const selectedEasy = easyQuestions.sort(() => 0.5 - Math.random()).slice(0, 20);
+    const selectedModerate = moderateQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
+    const selectedExpert = expertQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
 
     const allQuestions = [...selectedEasy, ...selectedModerate, ...selectedExpert];
     
-    // Shuffle the final array
-    return allQuestions.sort(() => 0.5 - Math.random());
+    // Shuffle the final array and ensure we have exactly 40 questions
+    const shuffledQuestions = allQuestions.sort(() => 0.5 - Math.random());
+    return shuffledQuestions.slice(0, 40);
   };
 
   // Start test
@@ -431,9 +468,9 @@ export const TestProvider = ({ children }) => {
       const questions = generateTest();
       const test = {
         id: 'test_' + Date.now(),
-        title: 'Internship Assessment Test',
+        title: 'Web Development Assessment Test',
         duration: 1800, // 30 minutes
-        totalQuestions: 35,
+        totalQuestions: 40,
         startTime: new Date().toISOString(),
       };
       
@@ -443,9 +480,11 @@ export const TestProvider = ({ children }) => {
       });
       
       toast.success('Test started! Good luck!');
+      return true; // Return success status
       
     } catch (error) {
       toast.error('Failed to start test. Please try again.');
+      return false; // Return failure status
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -499,7 +538,7 @@ export const TestProvider = ({ children }) => {
     const totalQuestions = state.questions.length;
     let correctAnswers = 0;
     
-    state.questions.forEach((question, index) => {
+    state.questions.forEach((question) => {
       const userAnswer = state.answers[question.id];
       if (userAnswer === question.correctAnswer) {
         correctAnswers++;
@@ -507,7 +546,7 @@ export const TestProvider = ({ children }) => {
     });
     
     const score = Math.round((correctAnswers / totalQuestions) * 100);
-    const passed = score >= 60; // 60% passing criteria
+    const passed = score >= 60; // 60% passing criteria (24/40 questions)
     
     const results = {
       score,

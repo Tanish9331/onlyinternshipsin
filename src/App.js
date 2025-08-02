@@ -9,9 +9,13 @@ import HomePage from './components/HomePage';
 import StudentLogin from './components/auth/StudentLogin';
 import AdminLogin from './components/auth/AdminLogin';
 import StudentDashboard from './components/student/StudentDashboard';
+import StudentProfile from './components/student/StudentProfile';
+import StudentPerformance from './components/student/StudentPerformance';
 import AdminDashboard from './components/admin/AdminDashboard';
 import TestInterface from './components/test/TestInterface';
 import TestResults from './components/test/TestResults';
+import TestInitializer from './components/test/TestInitializer';
+import TestDebug from './components/test/TestDebug';
 import TermsAgreement from './components/common/TermsAgreement';
 import TermsAndConditions from './components/common/TermsAndConditions';
 import PaymentPage from './components/payment/PaymentPage';
@@ -52,10 +56,34 @@ function App() {
                 } 
               />
               <Route 
+                path="/student/profile" 
+                element={
+                  <ProtectedRoute userType="student">
+                    <StudentProfile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/student/performance" 
+                element={
+                  <ProtectedRoute userType="student">
+                    <StudentPerformance />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
                 path="/student/payment" 
                 element={
                   <ProtectedRoute userType="student">
                     <PaymentPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/student/test-init" 
+                element={
+                  <ProtectedRoute userType="student">
+                    <TestInitializer />
                   </ProtectedRoute>
                 } 
               />
@@ -72,6 +100,14 @@ function App() {
                 element={
                   <ProtectedRoute userType="student">
                     <TestResults />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/student/test-debug" 
+                element={
+                  <ProtectedRoute userType="student">
+                    <TestDebug />
                   </ProtectedRoute>
                 } 
               />

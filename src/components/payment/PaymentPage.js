@@ -6,7 +6,6 @@ import {
   FaArrowLeft, 
   FaShieldAlt, 
   FaCheckCircle,
-  FaExclamationTriangle,
   FaInfoCircle
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
@@ -98,10 +97,7 @@ const PaymentPage = () => {
     }, 2000);
   };
 
-  const handlePaymentFailure = (error) => {
-    setLoading(false);
-    toast.error('Payment failed. Please try again.');
-  };
+
 
   return (
     <div className="min-h-screen bg-light-bg">

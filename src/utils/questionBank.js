@@ -506,9 +506,215 @@ class QuestionBank {
         correctAnswer: 0,
         difficulty: "expert",
         category: "Mathematics"
-      }
-    ];
-  }
+      },
+
+      // Node.js Questions
+      {
+        id: '37',
+        text: "Which environment variable is commonly used to define the port in Node.js?",
+        options: ["HTTP_PORT", "SERVER_PORT", "PORT", "NODE_PORT"],
+        correctAnswer: 2,
+        difficulty: "expert",
+        category: "Node.js"
+      },
+      {
+        id: '38',
+        text: "Which module is used to create a server in Node.js?",
+        options: ["net", "url", "fs", "http"],
+        correctAnswer: 3,
+        difficulty: "expert",
+        category: "Node.js"
+      },
+      {
+        id: '39',
+        text: "Which method is used to read a file asynchronously in Node.js?",
+        options: ["fs.readFileSync()", "fs.read()", "fs.open()", "fs.readFile()"],
+        correctAnswer: 3,
+        difficulty: "moderate",
+        category: "Node.js"
+      },
+      {
+        id: '40',
+        text: "Which command is used to initialize a Node.js project?",
+        options: ["npm install", "node install", "npm init", "node init"],
+        correctAnswer: 2,
+        difficulty: "easy",
+        category: "Node.js"
+      },
+      {
+        id: '41',
+        text: "Which object is used to handle HTTP requests in Express.js?",
+        options: ["client", "request", "res", "req"],
+        correctAnswer: 3,
+        difficulty: "moderate",
+        category: "Node.js"
+      },
+      {
+        id: '42',
+        text: "What is middleware in Express.js?",
+        options: ["Database connector", "Template engine", "Frontend component", "Function to handle requests"],
+        correctAnswer: 3,
+        difficulty: "expert",
+        category: "Node.js"
+      },
+      {
+        id: '43',
+        text: "Which method is used to handle events in Node.js?",
+        options: ["call()", "emit()", "on()", "listen()"],
+        correctAnswer: 2,
+        difficulty: "easy",
+        category: "Node.js"
+      },
+      {
+        id: '44',
+        text: "Which method is used to install Express.js?",
+        options: ["npm install express", "express install", "install express", "node install express"],
+        correctAnswer: 0,
+        difficulty: "expert",
+        category: "Node.js"
+      },
+      {
+        id: '45',
+        text: "What is the default scope in Node.js modules?",
+        options: ["File", "Global", "Public", "Local"],
+        correctAnswer: 3,
+        difficulty: "moderate",
+        category: "Node.js"
+      },
+             {
+         id: '46',
+         text: "What does npm stand for?",
+         options: ["Node Package Manager", "Node Programming Module", "Network Project Manager", "None of the above"],
+         correctAnswer: 0,
+         difficulty: "expert",
+         category: "Node.js"
+       },
+
+       // Cursor AI Questions
+       {
+         id: '47',
+         text: "Cursor AI can be extended using?",
+         options: ["Python Scripts", "Plugins/Extensions", "System APIs", "Terminal Commands"],
+         correctAnswer: 1,
+         difficulty: "expert",
+         category: "Cursor AI"
+       },
+       {
+         id: '48',
+         text: "The best use case for Cursor AI in teams is?",
+         options: ["Video calls", "Pair Programming", "Testing UI", "Game Dev"],
+         correctAnswer: 1,
+         difficulty: "expert",
+         category: "Cursor AI"
+       },
+       {
+         id: '49',
+         text: "Cursor AI uses which underlying model for code suggestions?",
+         options: ["ResNet", "GPT-based", "CNN", "RNN"],
+         correctAnswer: 1,
+         difficulty: "expert",
+         category: "Cursor AI"
+       },
+       {
+         id: '50',
+         text: "What feature allows Cursor AI to refactor large files contextually?",
+         options: ["ContextZoom", "SmartRefactor", "DeepEdit", "AI Agent"],
+         correctAnswer: 3,
+         difficulty: "expert",
+         category: "Cursor AI"
+       },
+       {
+         id: '51',
+         text: "Which file types does Cursor AI provide intelligent insights for?",
+         options: ["Only .py", "All files", ".exe only", ".js and .css only"],
+         correctAnswer: 1,
+         difficulty: "expert",
+         category: "Cursor AI"
+       },
+
+       // Tailwind CSS Questions
+       {
+         id: '52',
+         text: "What is the primary purpose of Tailwind CSS?",
+         options: ["To write JavaScript code", "To create responsive images", "To apply utility-first CSS classes", "To manage databases"],
+         correctAnswer: 2,
+         difficulty: "easy",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '53',
+         text: "Which class applies padding on all sides in Tailwind?",
+         options: ["m-4", "p-4", "px-4", "py-4"],
+         correctAnswer: 1,
+         difficulty: "easy",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '54',
+         text: "Which Tailwind class makes text bold?",
+         options: ["font-light", "text-lg", "font-bold", "text-bold"],
+         correctAnswer: 2,
+         difficulty: "easy",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '55',
+         text: "Which class would you use for center alignment of text?",
+         options: ["text-right", "text-center", "align-center", "justify-center"],
+         correctAnswer: 1,
+         difficulty: "easy",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '56',
+         text: "Which class sets a background color in Tailwind?",
+         options: ["bg-blue-500", "background-blue", "color-blue-500", "text-blue-500"],
+         correctAnswer: 0,
+         difficulty: "easy",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '57',
+         text: "What does `flex-col` do in a flex container?",
+         options: ["Sets direction to row", "Sets direction to column", "Centers content", "Justifies items"],
+         correctAnswer: 1,
+         difficulty: "moderate",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '58',
+         text: "Which Tailwind class applies margin on the x-axis?",
+         options: ["m-4", "my-4", "mx-4", "px-4"],
+         correctAnswer: 2,
+         difficulty: "moderate",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '59',
+         text: "What is the correct syntax for hover in Tailwind?",
+         options: ["hover:bg-blue-500", "bg-hover-blue-500", "hover=bg-blue-500", "hover.blue-500"],
+         correctAnswer: 0,
+         difficulty: "moderate",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '60',
+         text: "Which class controls the width in Tailwind?",
+         options: ["w-1/2", "width-50%", "width-half", "w-half"],
+         correctAnswer: 0,
+         difficulty: "moderate",
+         category: "Tailwind CSS"
+       },
+       {
+         id: '61',
+         text: "Which class makes an element hidden in Tailwind?",
+         options: ["invisible", "display-none", "hidden", "no-display"],
+         correctAnswer: 2,
+         difficulty: "moderate",
+         category: "Tailwind CSS"
+       }
+     ];
+   }
 }
 
 export default QuestionBank; 

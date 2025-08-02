@@ -104,6 +104,46 @@
     -ms-user-select: none;
   }
   
+  /* Light background color */
+  .bg-light-bg {
+    background-color: #f8f9fa;
+  }
+  
+  /* Primary dark color */
+  .text-primary-dark {
+    color: #1f2937;
+  }
+  
+  /* Success color */
+  .text-success {
+    color: #10b981;
+  }
+  
+    /* Danger color */
+  .text-danger {
+    color: #ef4444;
+  }
+  
+  /* Warning color */
+  .text-warning {
+    color: #f59e0b;
+  }
+  
+  /* Primary dark background */
+  .bg-primary-dark {
+    background-color: #1f2937;
+  }
+  
+  /* Success background */
+  .bg-success {
+    background-color: #10b981;
+  }
+  
+  /* Danger background */
+  .bg-danger {
+    background-color: #ef4444;
+  }
+  
   /* Disable zoom on mobile */
   @media (max-width: 768px) {
     .test-container {

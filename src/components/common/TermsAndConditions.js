@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaShieldAlt, FaClock, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
+import { FaShieldAlt, FaClock, FaExclamationTriangle } from 'react-icons/fa';
 
 const TermsAndConditions = () => {
   return (

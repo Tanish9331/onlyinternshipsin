@@ -22,6 +22,48 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  graduationYear: {
+    type: Number,
+    min: 2020,
+    max: 2030
+  },
+  course: {
+    type: String,
+    trim: true
+  },
+  branch: {
+    type: String,
+    trim: true
+  },
+  cgpa: {
+    type: Number,
+    min: 0,
+    max: 10
+  },
+  linkedin: {
+    type: String,
+    trim: true
+  },
+  github: {
+    type: String,
+    trim: true
+  },
+  portfolio: {
+    type: String,
+    trim: true
+  },
+  skills: [{
+    type: String,
+    trim: true
+  }],
+  bio: {
+    type: String,
+    trim: true,
+    maxlength: 500
+  },
+  profileImage: {
+    type: String
+  },
   role: {
     type: String,
     enum: ['student', 'admin'],

@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTest } from '../../contexts/TestContext';
-import { useAuth } from '../../contexts/AuthContext';
-import { FaClock, FaExclamationTriangle, FaCheck, FaTimes, FaArrowLeft, FaArrowRight, FaSave } from 'react-icons/fa';
+import { FaClock, FaExclamationTriangle, FaCheck, FaArrowLeft, FaArrowRight, FaSave } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import YugaYatraLogo from '../common/YugaYatraLogo';
 
@@ -14,6 +13,7 @@ const TestInterface = () => {
     answers, 
     timeRemaining, 
     warnings, 
+    testStarted,
     submitAnswer, 
     nextQuestion, 
     prevQuestion, 
@@ -22,11 +22,17 @@ const TestInterface = () => {
     addWarning, 
     completeTest 
   } = useTest();
-  const { user } = useAuth();
 
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showWarning, setShowWarning] = useState(false);
   const [lastActivity, setLastActivity] = useState(Date.now());
+
+  // Redirect if test hasn't been started or no questions available
+  useEffect(() => {
+    if (!testStarted || questions.length === 0) {
+      navigate('/student/test-init');
+    }
+  }, [testStarted, questions.length, navigate]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -34,6 +40,10 @@ const TestInterface = () => {
   useEffect(() => {
     if (timeRemaining <= 0) {
       completeTest();
+      // Navigate to results after a short delay
+      setTimeout(() => {
+        navigate('/student/results');
+      }, 1000);
       return;
     }
 
@@ -42,7 +52,7 @@ const TestInterface = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeRemaining, updateTimer, completeTest]);
+  }, [timeRemaining, updateTimer, completeTest, navigate]);
 
   // Anti-cheating monitoring
   useEffect(() => {
@@ -109,8 +119,9 @@ const TestInterface = () => {
   // Auto-save answers
   useEffect(() => {
     const autoSaveTimer = setInterval(() => {
-      if (selectedAnswer !== null) {
+      if (selectedAnswer !== null && currentQuestion) {
         submitAnswer(currentQuestion.id, selectedAnswer);
+        toast.success('Answer auto-saved', { duration: 2000 });
       }
     }, 30000); // Auto-save every 30 seconds
 
@@ -146,6 +157,10 @@ const TestInterface = () => {
   const confirmSubmit = () => {
     setShowWarning(false);
     completeTest();
+    // Navigate to results after a short delay
+    setTimeout(() => {
+      navigate('/student/results');
+    }, 1000);
   };
 
   const formatTime = (seconds) => {
@@ -158,12 +173,13 @@ const TestInterface = () => {
     return Object.keys(answers).length;
   };
 
-  if (!currentQuestion) {
+  if (!currentQuestion || questions.length === 0) {
     return (
       <div className="min-h-screen bg-light-bg flex items-center justify-center">
         <div className="text-center">
           <div className="spinner mx-auto mb-4"></div>
           <p className="text-primary-dark">Loading test...</p>
+          <p className="text-sm text-gray-600 mt-2">Please wait while we prepare your questions...</p>
         </div>
       </div>
     );
@@ -177,7 +193,7 @@ const TestInterface = () => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <YugaYatraLogo className="w-10 h-10" showText={false} />
-              <h1 className="text-xl font-bold text-primary-dark ml-3">Internship Assessment Test</h1>
+              <h1 className="text-xl font-bold text-primary-dark ml-3">Web Development Assessment Test</h1>
             </div>
             
             <div className="flex items-center space-x-4">

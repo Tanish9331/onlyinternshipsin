@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTest } from '../../contexts/TestContext';
-import { useAuth } from '../../contexts/AuthContext';
 import { 
   FaTrophy, 
   FaCheckCircle, 
@@ -18,7 +17,6 @@ import Confetti from 'react-confetti';
 const TestResults = () => {
   const navigate = useNavigate();
   const { results, questions, answers, resetTest } = useTest();
-  const { user } = useAuth();
   
   const [showAnswers, setShowAnswers] = useState(false);
   const [windowDimensions, setWindowDimensions] = useState({
@@ -45,11 +43,17 @@ const TestResults = () => {
   }, [results, navigate]);
 
   if (!results) {
-    return null;
+    return (
+      <div className="min-h-screen bg-light-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="spinner mx-auto mb-4"></div>
+          <p className="text-primary-dark">Loading results...</p>
+        </div>
+      </div>
+    );
   }
 
   const {
-    score,
     correctAnswers,
     totalQuestions,
     passed,

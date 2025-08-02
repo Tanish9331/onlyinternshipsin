@@ -182,7 +182,29 @@ export const AuthProvider = ({ children }) => {
   // Update user profile
   const updateProfile = async (profileData) => {
     try {
-      const updatedUser = { ...state.user, ...profileData, profileComplete: true };
+      // Validate required fields
+      if (!profileData.name || !profileData.phone || !profileData.college) {
+        toast.error('Please fill in all required fields');
+        return false;
+      }
+
+      // Validate CGPA if provided
+      if (profileData.cgpa && (profileData.cgpa < 0 || profileData.cgpa > 10)) {
+        toast.error('CGPA must be between 0 and 10');
+        return false;
+      }
+
+      // Validate graduation year if provided
+      if (profileData.graduationYear && (profileData.graduationYear < 2020 || profileData.graduationYear > 2030)) {
+        toast.error('Graduation year must be between 2020 and 2030');
+        return false;
+      }
+
+      const updatedUser = { 
+        ...state.user, 
+        ...profileData, 
+        profileComplete: true 
+      };
       
       localStorage.setItem('userData', JSON.stringify(updatedUser));
       

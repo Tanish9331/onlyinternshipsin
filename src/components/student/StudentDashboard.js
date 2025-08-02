@@ -4,22 +4,23 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTest } from '../../contexts/TestContext';
 import { 
   FaUser, 
-  FaSignOutAlt, 
   FaEdit, 
   FaCheck, 
   FaTimes,
   FaClock,
   FaTrophy,
   FaFileAlt,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaUserEdit,
+  FaChartLine
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
-import YugaYatraLogo from '../common/YugaYatraLogo';
+import StudentNavigation from './StudentNavigation';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
-  const { user, logout, updateProfile } = useAuth();
-  const { startTest, loading } = useTest();
+  const { user, updateProfile } = useAuth();
+  const { loading } = useTest();
   
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -60,46 +61,33 @@ const StudentDashboard = () => {
 
   const handleAcceptTerms = async () => {
     setShowTerms(false);
-    const success = await startTest();
-    if (success) {
-      navigate('/student/test');
-    }
+    navigate('/student/test-init');
+  };
+
+  const handleViewProfile = () => {
+    navigate('/student/profile');
   };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header - Fixed across all pages */}
-      <header className="bg-white shadow-lg border-b-2 border-gold-200 fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              {/* Yuga Yatra Logo */}
-              <YugaYatraLogo className="w-16 h-16" showText={false} />
-              <div className="ml-4">
-                <h1 className="text-3xl font-bold text-gray-900">
-                  Student Dashboard
-                </h1>
-                <p className="text-sm text-gold-600 font-medium">Welcome back, {user?.name || 'Student'}!</p>
-              </div>
-            </div>
-            <button
-              onClick={logout}
-              className="flex items-center text-gray-700 hover:text-gold-600 transition-colors font-medium"
-            >
-              <FaSignOutAlt className="mr-2" />
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <StudentNavigation />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Section */}
           <div className="lg:col-span-1">
             <div className="card">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-primary-dark">Profile Information</h2>
+                          <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-primary-dark">Profile Information</h2>
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleViewProfile}
+                  className="text-blue-600 hover:text-blue-800 transition-colors"
+                  title="View Full Profile"
+                >
+                  <FaUserEdit />
+                </button>
                 <button
                   onClick={() => setIsEditing(!isEditing)}
                   className="text-accent-red hover:text-red-600 transition-colors"
@@ -107,6 +95,7 @@ const StudentDashboard = () => {
                   {isEditing ? <FaTimes /> : <FaEdit />}
                 </button>
               </div>
+            </div>
 
               {isEditing ? (
                 <div className="space-y-4">
@@ -193,13 +182,13 @@ const StudentDashboard = () => {
           <div className="lg:col-span-2">
             {/* Test Information */}
             <div className="card mb-8">
-              <h2 className="text-xl font-semibold text-primary-dark mb-6">Internship Assessment Test</h2>
+              <h2 className="text-xl font-semibold text-primary-dark mb-6">Web Development Assessment Test</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
                   <FaFileAlt className="text-3xl text-blue-500 mx-auto mb-3" />
-                  <h3 className="font-semibold text-blue-800">35 Questions</h3>
-                  <p className="text-sm text-blue-600">Comprehensive assessment</p>
+                  <h3 className="font-semibold text-blue-800">40 Questions</h3>
+                  <p className="text-sm text-blue-600">Web development assessment</p>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
                   <FaClock className="text-3xl text-green-500 mx-auto mb-3" />
@@ -229,18 +218,53 @@ const StudentDashboard = () => {
                 </div>
               </div>
 
-              <button
-                onClick={handleStartTest}
-                disabled={loading || !user?.profileComplete}
-                className="btn-primary w-full md:w-auto px-8 py-3 flex items-center justify-center"
-              >
-                {loading ? (
-                  <div className="spinner mr-2"></div>
-                ) : (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={handleStartTest}
+                  disabled={loading || !user?.profileComplete}
+                  className="btn-primary px-8 py-3 flex items-center justify-center"
+                >
+                  {loading ? (
+                    <div className="spinner mr-2"></div>
+                  ) : (
+                    <FaFileAlt className="mr-2" />
+                  )}
+                  {loading ? 'Preparing Test...' : 'Start Test'}
+                </button>
+                
+                <button
+                  onClick={() => navigate('/student/test-debug')}
+                  className="btn-outline px-8 py-3 flex items-center justify-center"
+                >
                   <FaFileAlt className="mr-2" />
-                )}
-                {loading ? 'Preparing Test...' : 'Start Test'}
-              </button>
+                  Test Debug
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="card mb-8">
+              <h2 className="text-xl font-semibold text-primary-dark mb-6">Quick Stats</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <FaChartLine className="text-3xl text-blue-500 mx-auto mb-3" />
+                  <h3 className="text-2xl font-bold text-blue-800">0</h3>
+                  <p className="text-sm text-blue-600">Tests Completed</p>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <FaTrophy className="text-3xl text-green-500 mx-auto mb-3" />
+                  <h3 className="text-2xl font-bold text-green-800">0</h3>
+                  <p className="text-sm text-green-600">Certificates Earned</p>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <FaUser className="text-3xl text-purple-500 mx-auto mb-3" />
+                  <h3 className="text-2xl font-bold text-purple-800">
+                    {user?.profileComplete ? 'Complete' : 'Incomplete'}
+                  </h3>
+                  <p className="text-sm text-purple-600">Profile Status</p>
+                </div>
+              </div>
             </div>
 
             {/* Test History */}
@@ -280,8 +304,8 @@ const StudentDashboard = () => {
                   <h4 className="font-semibold mb-2">Test Rules:</h4>
                   <ul className="space-y-1">
                     <li>• Duration: 30 minutes (1800 seconds)</li>
-                    <li>• Questions: 35 (Easy/Moderate/Expert mix)</li>
-                    <li>• Passing: 60% or higher (21/35 correct)</li>
+                    <li>• Questions: 40 (HTML/CSS/JavaScript mix)</li>
+                    <li>• Passing: 60% or higher (24/40 correct)</li>
                     <li>• Fee: ₹295 (₹250 + GST) - Non-refundable</li>
                     <li>• Max attempts: 3</li>
                   </ul>
