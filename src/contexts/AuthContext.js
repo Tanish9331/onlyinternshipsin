@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-        // Add global debug functions
+    // Add global debug functions
     window.debugAuth = {
       testConnection: async () => {
         const { testFirebaseConnection } = await import('../firebase.js');
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
           const result = await login(email, password);
           console.log('✅ Login test successful:', result);
           return result;
-        } catch (error) {
+      } catch (error) {
           console.error('❌ Login test failed:', error);
           return error;
         }
@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }) => {
 
     // Cleanup subscription on unmount
     return unsubscribe;
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // Login with email and password
   const login = async (email, password) => {
@@ -349,18 +349,10 @@ export const AuthProvider = ({ children }) => {
     try {
       if (user) {
         await user.reload();
-        // Get the updated user object
-        const updatedUser = auth.currentUser;
-        if (updatedUser) {
-          setUser(updatedUser);
-          console.log('User verification status updated:', updatedUser.emailVerified);
-          return updatedUser.emailVerified;
-        }
+        setUser(user);
       }
-      return false;
     } catch (error) {
       console.error('Error refreshing user verification:', error);
-      return false;
     }
   };
 
@@ -397,6 +389,8 @@ export const AuthProvider = ({ children }) => {
         return 'An account already exists with the same email but different sign-in credentials.';
       case 'auth/requires-recent-login':
         return 'This operation requires recent authentication. Please log in again.';
+      case 'auth/invalid-credential':
+        return 'Invalid email or password. Please check your credentials and try again.';
       case 'auth/email-not-verified':
       case 'EMAIL_NOT_VERIFIED':
         return 'Please verify your email address before accessing the dashboard. Check your inbox for the verification link.';
@@ -405,10 +399,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Check if user is offline (unused but kept for future use)
-  // const isOffline = () => {
-  //   return !navigator.onLine;
-  // };
+  // Check if user is offline
+  const isOffline = () => {
+    return !navigator.onLine;
+  };
 
   // Test authentication setup
   const testAuthSetup = async () => {
@@ -416,7 +410,7 @@ export const AuthProvider = ({ children }) => {
       console.log('🧪 Testing authentication setup...');
       
       // Import debug function
-      const { testFirebaseConnection } = await import('../firebase.js');
+      const { debugAuthIssue, testFirebaseConnection } = await import('../firebase.js');
       
       // Test Firebase connection
       const connectionOk = await testFirebaseConnection();
@@ -424,7 +418,7 @@ export const AuthProvider = ({ children }) => {
         console.error('❌ Firebase connection failed');
         return false;
       }
-      
+
       console.log('✅ Authentication setup test completed');
       return true;
     } catch (error) {
