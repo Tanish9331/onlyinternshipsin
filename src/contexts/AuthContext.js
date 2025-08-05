@@ -1,240 +1,425 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import toast from 'react-hot-toast';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { 
+  auth 
+} from '../firebase.js';
+import { 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  updateProfile, 
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  GoogleAuthProvider,
+  signInWithPopup,
+  linkWithCredential,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+  deleteUser
+} from 'firebase/auth';
 
+// Create Auth Context
 const AuthContext = createContext();
 
-const initialState = {
-  user: null,
-  userType: null, // 'student' or 'admin'
-  isAuthenticated: false,
-  loading: true,
-  otpSent: false,
-  otpVerified: false,
-};
-
-const authReducer = (state, action) => {
-  switch (action.type) {
-    case 'SET_LOADING':
-      return { ...state, loading: action.payload };
-    
-    case 'SET_USER':
-      return {
-        ...state,
-        user: action.payload.user,
-        userType: action.payload.userType,
-        isAuthenticated: true,
-        loading: false,
-      };
-    
-    case 'SET_OTP_SENT':
-      return { ...state, otpSent: action.payload };
-    
-    case 'SET_OTP_VERIFIED':
-      return { ...state, otpVerified: action.payload };
-    
-    case 'LOGOUT':
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userType');
-      localStorage.removeItem('userData');
-      return {
-        ...initialState,
-        loading: false,
-      };
-    
-    default:
-      return state;
+// Custom hook to use auth context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
   }
+  return context;
 };
 
+// Auth Provider Component
 export const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(authReducer, initialState);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  // Check for existing auth on app load
+  // Monitor network status
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const userType = localStorage.getItem('userType');
-    const userData = localStorage.getItem('userData');
+    const handleOnline = () => {
+      setIsOnline(true);
+      console.log('Network connection restored');
+    };
 
-    if (token && userType && userData) {
-      try {
-        const user = JSON.parse(userData);
-        dispatch({
-          type: 'SET_USER',
-          payload: { user, userType },
-        });
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        dispatch({ type: 'LOGOUT' });
-      }
-    } else {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
+    const handleOffline = () => {
+      setIsOnline(false);
+      console.log('Network connection lost');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
-  // Send OTP for student login
-  const sendOTP = async (email) => {
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+      setError(null);
+    }, (error) => {
+      console.error('Auth state change error:', error);
+      setError(error.message);
+      setLoading(false);
+    });
+
+    // Add global debug functions
+    window.debugAuth = {
+      testConnection: async () => {
+        const { testFirebaseConnection } = await import('../firebase.js');
+        return await testFirebaseConnection();
+      },
+      testAuthSetup: testAuthSetup,
+      getAuthState: () => ({ user, loading, error, isOnline }),
+      clearError: clearError,
+      testLogin: async (email, password) => {
+        try {
+          console.log('🧪 Testing login with:', email);
+          const result = await login(email, password);
+          console.log('✅ Login test successful:', result);
+          return result;
+        } catch (error) {
+          console.error('❌ Login test failed:', error);
+          return error;
+        }
+      }
+    };
+
+    console.log('🔧 Auth debug functions available: window.debugAuth');
+
+    // Cleanup subscription on unmount
+    return unsubscribe;
+  }, []);
+
+  // Login with email and password
+  const login = async (email, password) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
+      setLoading(true);
+      setError(null);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Validate input
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
       
-      // For demo purposes, accept any email
-      dispatch({ type: 'SET_OTP_SENT', payload: true });
-      toast.success('OTP sent to your email!');
+      // Retry logic for network failures
+      let attempts = 0;
+      const maxAttempts = 3;
       
+      while (attempts < maxAttempts) {
+        try {
+          console.log('Attempting login with email:', email);
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          console.log('Login successful for user:', userCredential.user.email);
+          return userCredential.user;
+        } catch (error) {
+          attempts++;
+          console.log(`Login attempt ${attempts} failed:`, error.code, error.message);
+          
+          // Handle specific error types
+          if (error.code === 'auth/network-request-failed') {
+            if (attempts < maxAttempts) {
+              console.log(`Retrying login in ${attempts * 1000}ms...`);
+              await new Promise(resolve => setTimeout(resolve, attempts * 1000));
+              continue;
+            }
+          }
+          
+          // For invalid credential errors, don't retry
+          if (error.code === 'auth/invalid-credential' || 
+              error.code === 'auth/user-not-found' || 
+              error.code === 'auth/wrong-password') {
+            console.log('Invalid credentials detected, not retrying');
+            throw error;
+          }
+          
+          // For other errors, retry if we have attempts left
+          if (attempts < maxAttempts) {
+            console.log(`Retrying login in ${attempts * 1000}ms...`);
+            await new Promise(resolve => setTimeout(resolve, attempts * 1000));
+            continue;
+          }
+          
+          throw error;
+        }
+      }
     } catch (error) {
-      toast.error('Failed to send OTP. Please try again.');
+      console.error('Login error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
+      setLoading(false);
     }
   };
 
-  // Verify OTP for student login
-  const verifyOTP = async (email, otp) => {
+  // Sign up with email and password
+  const signup = async (email, password, fullName = null) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
+      setLoading(true);
+      setError(null);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, accept any 6-digit OTP
-      if (otp.length === 6) {
-        const user = {
-          id: 'student_' + Date.now(),
-          email,
-          name: 'Student User',
-          phone: '',
-          college: '',
-          profileComplete: false,
-        };
-        
-        const token = 'student_token_' + Date.now();
-        
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('userType', 'student');
-        localStorage.setItem('userData', JSON.stringify(user));
-        
-        dispatch({
-          type: 'SET_USER',
-          payload: { user, userType: 'student' },
+      // Update profile with display name if provided
+      if (fullName) {
+        await updateProfile(userCredential.user, {
+          displayName: fullName
         });
-        
-        dispatch({ type: 'SET_OTP_VERIFIED', payload: true });
-        toast.success('Login successful!');
-        return true;
-      } else {
-        toast.error('Invalid OTP. Please try again.');
-        return false;
       }
+
+      // Send email verification
+      await sendEmailVerification(userCredential.user);
       
+      return userCredential.user;
     } catch (error) {
-      toast.error('Failed to verify OTP. Please try again.');
-      return false;
+      console.error('Signup error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
+      setLoading(false);
     }
   };
 
-  // Admin login
-  const adminLogin = async (username, password) => {
+  // Logout user
+  const logout = async () => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Admin authentication with credentials: Admin/Admin
-      if (username === 'Admin' && password === 'Admin') {
-        const user = {
-          id: 'admin_1',
-          username: 'Admin',
-          name: 'Administrator',
-          role: 'admin',
-        };
-        
-        const token = 'admin_token_' + Date.now();
-        
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('userType', 'admin');
-        localStorage.setItem('userData', JSON.stringify(user));
-        
-        dispatch({
-          type: 'SET_USER',
-          payload: { user, userType: 'admin' },
-        });
-        
-        toast.success('Admin login successful!');
-        return true;
-      } else {
-        toast.error('Invalid credentials. Please try again.');
-        return false;
-      }
-      
+      setLoading(true);
+      setError(null);
+      await signOut(auth);
     } catch (error) {
-      toast.error('Login failed. Please try again.');
-      return false;
+      console.error('Logout error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
+      setLoading(false);
     }
   };
 
   // Update user profile
-  const updateProfile = async (profileData) => {
+  const updateUserProfile = async (profileData) => {
     try {
-      // Validate required fields
-      if (!profileData.name || !profileData.phone || !profileData.college) {
-        toast.error('Please fill in all required fields');
-        return false;
-      }
-
-      // Validate CGPA if provided
-      if (profileData.cgpa && (profileData.cgpa < 0 || profileData.cgpa > 10)) {
-        toast.error('CGPA must be between 0 and 10');
-        return false;
-      }
-
-      // Validate graduation year if provided
-      if (profileData.graduationYear && (profileData.graduationYear < 2020 || profileData.graduationYear > 2030)) {
-        toast.error('Graduation year must be between 2020 and 2030');
-        return false;
-      }
-
-      const updatedUser = { 
-        ...state.user, 
-        ...profileData, 
-        profileComplete: true 
-      };
-      
-      localStorage.setItem('userData', JSON.stringify(updatedUser));
-      
-      dispatch({
-        type: 'SET_USER',
-        payload: { user: updatedUser, userType: state.userType },
-      });
-      
-      toast.success('Profile updated successfully!');
-      return true;
-      
+      setLoading(true);
+      setError(null);
+      await updateProfile(user, profileData);
     } catch (error) {
-      toast.error('Failed to update profile. Please try again.');
+      console.error('Profile update error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Send email verification
+  const sendVerification = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await sendEmailVerification(user);
+    } catch (error) {
+      console.error('Email verification error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Send password reset email
+  const resetPassword = async (email) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Google sign in
+  const signInWithGoogle = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      return userCredential.user;
+    } catch (error) {
+      console.error('Google sign in error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Link email with Google account
+  const linkEmailWithGoogle = async (email, password) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const credential = EmailAuthProvider.credential(email, password);
+      await linkWithCredential(user, credential);
+    } catch (error) {
+      console.error('Link email error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Re-authenticate user (for sensitive operations)
+  const reauthenticate = async (email, password) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const credential = EmailAuthProvider.credential(email, password);
+      await reauthenticateWithCredential(user, credential);
+    } catch (error) {
+      console.error('Re-authentication error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update password
+  const updateUserPassword = async (newPassword) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await updatePassword(user, newPassword);
+    } catch (error) {
+      console.error('Password update error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete user account
+  const deleteUserAccount = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await deleteUser(user);
+    } catch (error) {
+      console.error('Delete account error:', error);
+      setError(getErrorMessage(error.code));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Clear error
+  const clearError = () => {
+    setError(null);
+  };
+
+  // Helper function to get user-friendly error messages
+  const getErrorMessage = (errorCode) => {
+    switch (errorCode) {
+      case 'auth/user-not-found':
+        return 'No account found with this email address.';
+      case 'auth/wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'auth/invalid-credential':
+        return 'Invalid email or password. Please check your credentials and try again.';
+      case 'auth/email-already-in-use':
+        return 'An account with this email already exists.';
+      case 'auth/weak-password':
+        return 'Password should be at least 6 characters long.';
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
+      case 'auth/too-many-requests':
+        return 'Too many failed attempts. Please try again later.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
+      case 'auth/operation-not-allowed':
+        return 'This operation is not allowed.';
+      case 'auth/network-request-failed':
+        return 'Network connection failed. Please check your internet connection and try again.';
+      case 'auth/popup-closed-by-user':
+        return 'Sign-in was cancelled.';
+      case 'auth/cancelled-popup-request':
+        return 'Sign-in was cancelled.';
+      case 'auth/popup-blocked':
+        return 'Pop-up was blocked by browser. Please allow pop-ups for this site.';
+      case 'auth/account-exists-with-different-credential':
+        return 'An account already exists with the same email but different sign-in credentials.';
+      case 'auth/requires-recent-login':
+        return 'This operation requires recent authentication. Please log in again.';
+      case 'auth/invalid-credential':
+        return 'Invalid email or password. Please check your credentials and try again.';
+      default:
+        return 'An error occurred. Please try again.';
+    }
+  };
+
+  // Check if user is offline
+  const isOffline = () => {
+    return !navigator.onLine;
+  };
+
+  // Test authentication setup
+  const testAuthSetup = async () => {
+    try {
+      console.log('🧪 Testing authentication setup...');
+      
+      // Import debug function
+      const { debugAuthIssue, testFirebaseConnection } = await import('../firebase.js');
+      
+      // Test Firebase connection
+      const connectionOk = await testFirebaseConnection();
+      if (!connectionOk) {
+        console.error('❌ Firebase connection failed');
+        return false;
+      }
+      
+      console.log('✅ Authentication setup test completed');
+      return true;
+    } catch (error) {
+      console.error('❌ Authentication setup test failed:', error);
       return false;
     }
   };
 
-  // Logout
-  const logout = () => {
-    dispatch({ type: 'LOGOUT' });
-    toast.success('Logged out successfully!');
-  };
-
+  // Context value
   const value = {
-    ...state,
-    sendOTP,
-    verifyOTP,
-    adminLogin,
-    updateProfile,
+    user,
+    loading,
+    error,
+    login,
+    signup,
     logout,
+    updateProfile: updateUserProfile,
+    sendVerification,
+    resetPassword,
+    signInWithGoogle,
+    linkEmailWithGoogle,
+    reauthenticate,
+    updatePassword: updateUserPassword,
+    deleteAccount: deleteUserAccount,
+    clearError,
+    isAuthenticated: !!user,
+    isEmailVerified: user?.emailVerified || false,
+    isOnline: isOnline,
+    testAuthSetup
   };
 
   return (
@@ -242,12 +427,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 }; 

@@ -1,47 +1,83 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { FaArrowLeft, FaEnvelope } from 'react-icons/fa';
+import { FaArrowLeft, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import YugaYatraLogo from '../common/YugaYatraLogo';
 
 const StudentLogin = () => {
   const navigate = useNavigate();
-  const { sendOTP, verifyOTP, loading } = useAuth();
+  const { login, signup, loading, error, clearError, isOnline, testAuthSetup } = useAuth();
   
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignup, setIsSignup] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [fullName, setFullName] = useState('');
 
-  const handleSendOTP = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    clearError();
+    
+    if (!isOnline) {
+      toast.error('No internet connection. Please check your network and try again.');
+      return;
+    }
     
     if (!email || !email.includes('@')) {
       toast.error('Please enter a valid email address');
       return;
     }
 
-    // Skip OTP and directly authenticate user
-    const user = {
-      id: 'student_' + Date.now(),
-      email,
-      name: 'Student User',
-      phone: '',
-      college: '',
-      profileComplete: false,
-    };
-    
-    const token = 'student_token_' + Date.now();
-    
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('userType', 'student');
-    localStorage.setItem('userData', JSON.stringify(user));
-    
-    toast.success('Login successful! Redirecting to test...');
-    
-    // Redirect directly to test page
-    navigate('/student/test');
+    if (!password || password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      console.log('🔍 Starting authentication process...');
+      console.log('Email:', email);
+      console.log('Password length:', password.length);
+      console.log('Mode:', isSignup ? 'Signup' : 'Login');
+      
+      if (isSignup) {
+        console.log('Creating new account...');
+        await signup(email, password, fullName);
+        toast.success('Account created successfully! Please check your email for verification.');
+        navigate('/student/dashboard');
+      } else {
+        console.log('Attempting login...');
+        await login(email, password);
+        toast.success('Login successful!');
+        navigate('/student/dashboard');
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      toast.error(error.message || 'Authentication failed');
+    }
   };
 
+  const toggleMode = () => {
+    setIsSignup(!isSignup);
+    clearError();
+  };
 
+  const testFirebaseConnection = async () => {
+    try {
+      console.log('🧪 Testing Firebase connection...');
+      const result = await testAuthSetup();
+      if (result) {
+        toast.success('Firebase connection test successful!');
+      } else {
+        toast.error('Firebase connection test failed!');
+      }
+    } catch (error) {
+      console.error('Firebase test error:', error);
+      toast.error('Firebase test failed: ' + error.message);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-light-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -53,21 +89,60 @@ const StudentLogin = () => {
             Back to Home
           </Link>
           
+          {/* Network Status Indicator */}
+          {!isOnline && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-red-600 flex items-center justify-center">
+                <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                No internet connection
+              </p>
+            </div>
+          )}
+          
           <div className="flex justify-center mb-6">
             <YugaYatraLogo className="w-16 h-16" showText={false} />
           </div>
           
           <h2 className="text-3xl font-bold text-primary-dark mb-2">
-            Student Login
+            {isSignup ? 'Create Account' : 'Student Login'}
           </h2>
           <p className="text-gray-600">
-            Enter your email to start your test
+            {isSignup ? 'Sign up to start your internship journey' : 'Sign in to access your dashboard'}
           </p>
         </div>
 
         {/* Form */}
         <div className="bg-white rounded-xl shadow-lg p-8">
-          <form onSubmit={handleSendOTP} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {isSignup && (
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="input-field"
+                  placeholder="Enter your full name"
+                />
+              </div>
+            )}
+
+            {/* Debug Button - Only in development */}
+            {process.env.NODE_ENV === 'development' && (
+              <button
+                type="button"
+                onClick={testFirebaseConnection}
+                className="w-full px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm"
+              >
+                🔧 Test Firebase Connection
+              </button>
+            )}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -89,6 +164,44 @@ const StudentLogin = () => {
               </div>
             </div>
 
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaLock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input-field pl-10 pr-10"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <FaEyeSlash className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <FaEye className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
@@ -97,45 +210,36 @@ const StudentLogin = () => {
               {loading ? (
                 <div className="spinner mr-2"></div>
               ) : (
-                <FaEnvelope className="mr-2" />
+                <FaLock className="mr-2" />
               )}
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Processing...' : (isSignup ? 'Create Account' : 'Sign In')}
             </button>
-
-            <div className="text-center pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600 mb-2">
-                Don't have an account?
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  toast('Registration is automatic! Just enter your email above to get started.');
-                }}
-                className="text-gold-600 hover:text-gold-700 text-sm font-medium transition-colors underline"
-              >
-                New User? Get Started
-              </button>
-            </div>
           </form>
-        </div>
 
-        {/* Footer */}
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            <span className="text-primary-dark font-medium">
-              Quick access to your internship test
-            </span>
-          </p>
-        </div>
+          {/* Toggle between login and signup */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              {isSignup ? 'Already have an account?' : "Don't have an account?"}
+              <button
+                onClick={toggleMode}
+                className="ml-1 text-primary-dark hover:text-accent-red font-medium"
+              >
+                {isSignup ? 'Sign In' : 'Sign Up'}
+              </button>
+            </p>
+          </div>
 
-        {/* Info Notice */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-green-800 mb-2">Ready to Test!</h3>
-          <ul className="text-xs text-green-700 space-y-1">
-            <li>• Enter any valid email to get started</li>
-            <li>• Take the internship assessment test</li>
-            <li>• Get your results and certificates instantly</li>
-          </ul>
+          {/* Forgot Password Link */}
+          {!isSignup && (
+            <div className="mt-4 text-center">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary-dark hover:text-accent-red"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

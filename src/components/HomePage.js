@@ -169,7 +169,7 @@ const HomePage = () => {
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gold-200">
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">Register & Login</h3>
                   <p className="text-gray-600 text-sm">
-                    Create your account with email verification and secure OTP authentication.
+                    Create your account with email verification and secure authentication.
                   </p>
                 </div>
               </div>

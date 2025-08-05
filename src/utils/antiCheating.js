@@ -1,4 +1,4 @@
-// Anti-Cheating Security System
+// Anti-Cheating Security System - DISABLED
 class AntiCheatingSystem {
   constructor() {
     this.warnings = 0;
@@ -11,60 +11,16 @@ class AntiCheatingSystem {
     this.onAutoSubmit = null;
   }
 
-  // Initialize anti-cheating measures
+  // Initialize anti-cheating measures - DISABLED
   init(onWarning, onAutoSubmit) {
-    this.onWarning = onWarning;
-    this.onAutoSubmit = onAutoSubmit;
-    this.isActive = true;
-    
-    this.disableRightClick();
-    this.disableKeyboardShortcuts();
-    this.disableTextSelection();
-    this.monitorTabSwitching();
-    this.monitorInactivity();
-    this.monitorActivity();
-    this.disableDevTools();
-    this.preventScreenshots();
-    
-    console.log('Anti-cheating system activated');
+    console.log('Anti-cheating system DISABLED - all features allowed');
+    return;
   }
 
-  // Disable right-click context menu
-  disableRightClick() {
-    document.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      this.addWarning('Right-click disabled');
-      return false;
-    });
-  }
-
-  // Disable keyboard shortcuts
+  // Disable keyboard shortcuts - DISABLED
   disableKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
-      // Prevent common shortcuts
-      const blockedKeys = [
-        'F12', 'F5', 'F11', // Dev tools and refresh
-        'PrintScreen', 'PrtScn', // Screenshot
-        'Meta+Shift+3', 'Meta+Shift+4', // Mac screenshots
-        'Ctrl+Shift+I', 'Ctrl+Shift+J', 'Ctrl+U', // Dev tools
-        'Ctrl+P', 'Ctrl+S', 'Ctrl+U', // Print, Save, View Source
-        'Alt+Tab', 'Alt+F4', // Window switching
-        'Ctrl+Tab', 'Ctrl+Shift+Tab', // Tab switching
-        'Ctrl+W', 'Ctrl+N', // Close/New window
-        'Ctrl+R', 'F5', // Refresh
-        'Ctrl+Shift+R', 'Ctrl+F5' // Hard refresh
-      ];
-
-      const keyCombo = this.getKeyCombo(e);
-      
-      if (blockedKeys.includes(keyCombo) || 
-          (e.ctrlKey && e.shiftKey) || 
-          (e.metaKey && e.shiftKey)) {
-        e.preventDefault();
-        this.addWarning('Keyboard shortcuts disabled');
-        return false;
-      }
-    });
+    console.log('Keyboard shortcuts allowed');
+    return;
   }
 
   // Get key combination string
@@ -80,139 +36,57 @@ class AntiCheatingSystem {
     return parts.join('+');
   }
 
-  // Disable text selection
+  // Disable text selection - DISABLED
   disableTextSelection() {
-    document.addEventListener('selectstart', (e) => {
-      e.preventDefault();
-      return false;
-    });
-
-    document.addEventListener('dragstart', (e) => {
-      e.preventDefault();
-      return false;
-    });
+    console.log('Text selection allowed');
+    return;
   }
 
-  // Monitor tab/window switching
+  // Monitor tab/window switching - DISABLED
   monitorTabSwitching() {
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        this.addWarning('Tab switching detected');
-      }
-    });
-
-    window.addEventListener('blur', () => {
-      this.addWarning('Window focus lost');
-    });
-
-    window.addEventListener('focus', () => {
-      this.lastActivity = Date.now();
-    });
+    console.log('Tab switching allowed');
+    return;
   }
 
-  // Monitor inactivity
+  // Monitor inactivity - DISABLED
   monitorInactivity() {
-    this.inactivityTimer = setInterval(() => {
-      if (Date.now() - this.lastActivity > this.inactivityTimeout) {
-        this.addWarning('Inactivity detected');
-        this.lastActivity = Date.now();
-      }
-    }, 5000); // Check every 5 seconds
+    console.log('Inactivity monitoring disabled');
+    return;
   }
 
-  // Monitor user activity
+  // Monitor user activity - DISABLED
   monitorActivity() {
-    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    
-    activityEvents.forEach(event => {
-      document.addEventListener(event, () => {
-        this.lastActivity = Date.now();
-      }, { passive: true });
-    });
+    console.log('Activity monitoring disabled');
+    return;
   }
 
-  // Disable developer tools
+  // Disable developer tools - DISABLED
   disableDevTools() {
-    // Method 1: Detect F12
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'F12') {
-        e.preventDefault();
-        this.addWarning('Developer tools access blocked');
-        return false;
-      }
-    });
-
-    // Method 2: Detect dev tools via console
-    setInterval(() => {
-      const devtools = {
-        open: false,
-        orientation: null
-      };
-
-      const threshold = 160;
-
-      const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-      const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-
-      if (widthThreshold || heightThreshold) {
-        if (!devtools.open) {
-          devtools.open = true;
-          this.addWarning('Developer tools detected');
-        }
-      } else {
-        devtools.open = false;
-      }
-    }, 1000);
+    console.log('Developer tools allowed');
+    return;
   }
 
-  // Prevent screenshots
+  // Prevent screenshots - DISABLED
   preventScreenshots() {
-    // Disable print screen
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'PrintScreen' || e.key === 'PrtScn') {
-        e.preventDefault();
-        this.addWarning('Screenshot attempt blocked');
-        return false;
-      }
-    });
-
-    // Disable screen capture API
-    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      const originalGetDisplayMedia = navigator.mediaDevices.getDisplayMedia;
-      navigator.mediaDevices.getDisplayMedia = function() {
-        this.addWarning('Screen capture attempt blocked');
-        return Promise.reject(new Error('Screen capture not allowed'));
-      };
-    }
+    console.log('Screenshots allowed');
+    return;
   }
 
-  // Add warning and handle consequences
+  // Add warning and handle consequences - DISABLED
   addWarning(reason) {
-    if (!this.isActive) return;
-
-    this.warnings++;
-    
-    if (this.onWarning) {
-      this.onWarning(this.warnings, reason);
-    }
-
-    console.warn(`Warning ${this.warnings}/${this.maxWarnings}: ${reason}`);
-
-    if (this.warnings >= this.maxWarnings) {
-      this.triggerAutoSubmit();
-    }
+    console.log(`Warning ignored: ${reason}`);
+    return;
   }
 
-  // Trigger auto-submit
+  // Trigger auto-submit - DISABLED
   triggerAutoSubmit() {
-    if (this.onAutoSubmit) {
-      this.onAutoSubmit('Maximum warnings reached');
-    }
+    console.log('Auto-submit disabled');
+    return;
   }
 
   // Get current warning count
   getWarnings() {
-    return this.warnings;
+    return 0;
   }
 
   // Reset warnings
@@ -222,18 +96,18 @@ class AntiCheatingSystem {
 
   // Deactivate anti-cheating
   deactivate() {
-    this.isActive = false;
-    
-    if (this.inactivityTimer) {
-      clearInterval(this.inactivityTimer);
-    }
-
-    // Remove event listeners (basic cleanup)
-    document.removeEventListener('contextmenu', this.disableRightClick);
-    document.removeEventListener('keydown', this.disableKeyboardShortcuts);
-    document.removeEventListener('visibilitychange', this.monitorTabSwitching);
-    
     console.log('Anti-cheating system deactivated');
+  }
+
+  // Manual override for testing
+  static enableForTesting() {
+    console.log('Anti-cheating disabled - all features allowed');
+    return false;
+  }
+
+  static disableForTesting() {
+    console.log('Anti-cheating disabled - all features allowed');
+    return true;
   }
 }
 

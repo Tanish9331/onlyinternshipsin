@@ -3,8 +3,9 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const ProtectedRoute = ({ children, userType }) => {
-  const { isAuthenticated, userType: currentUserType, loading } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
 
+  // Show loading spinner while checking authentication
   if (loading) {
     return (
       <div className="min-h-screen bg-light-bg flex items-center justify-center">
@@ -16,12 +17,20 @@ const ProtectedRoute = ({ children, userType }) => {
     );
   }
 
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/student/login" replace />;
   }
 
-  if (userType && currentUserType !== userType) {
-    return <Navigate to="/" replace />;
+  // Check if user has required role (if specified)
+  if (userType) {
+    // For now, we'll use a simple role check based on user properties
+    // You can extend this based on your user data structure
+    const userRole = user?.displayName?.includes('Admin') ? 'admin' : 'student';
+    
+    if (userRole !== userType) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   return children;

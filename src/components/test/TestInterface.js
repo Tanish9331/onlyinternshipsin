@@ -54,66 +54,10 @@ const TestInterface = () => {
     return () => clearInterval(timer);
   }, [timeRemaining, updateTimer, completeTest, navigate]);
 
-  // Anti-cheating monitoring
+  // Anti-cheating monitoring - DISABLED
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        addWarning();
-        toast.error('Warning: Tab switching detected!');
-      }
-    };
-
-    const handleBeforeUnload = (e) => {
-      e.preventDefault();
-      e.returnValue = '';
-    };
-
-    const handleKeyDown = (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        addWarning();
-        toast.error('Warning: Keyboard shortcuts disabled!');
-      }
-    };
-
-    const handleContextMenu = (e) => {
-      e.preventDefault();
-      addWarning();
-      toast.error('Warning: Right-click disabled!');
-    };
-
-    // Activity monitoring
-    const handleActivity = () => {
-      setLastActivity(Date.now());
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('mousemove', handleActivity);
-    document.addEventListener('keypress', handleActivity);
-    document.addEventListener('click', handleActivity);
-
-    // Check for inactivity
-    const inactivityTimer = setInterval(() => {
-      if (Date.now() - lastActivity > 30000) { // 30 seconds
-        addWarning();
-        toast.error('Warning: Inactivity detected!');
-        setLastActivity(Date.now());
-      }
-    }, 10000);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('mousemove', handleActivity);
-      document.removeEventListener('keypress', handleActivity);
-      document.removeEventListener('click', handleActivity);
-      clearInterval(inactivityTimer);
-    };
+    console.log('Anti-cheating monitoring DISABLED - all features allowed');
+    return;
   }, [addWarning, lastActivity]);
 
   // Auto-save answers
@@ -188,33 +132,19 @@ const TestInterface = () => {
   return (
     <div className="min-h-screen bg-light-bg test-container">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <YugaYatraLogo className="w-10 h-10" showText={false} />
-              <h1 className="text-xl font-bold text-primary-dark ml-3">Web Development Assessment Test</h1>
+      <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-semibold text-gray-800">Online Test</h1>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Test ID:</span>
+              <span className="text-sm font-medium text-gray-700">{testId}</span>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              {/* Warnings */}
-              {warnings > 0 && (
-                <div className="flex items-center text-warning">
-                  <FaExclamationTriangle className="mr-1" />
-                  <span className="text-sm font-medium">Warnings: {warnings}/3</span>
-                </div>
-              )}
-              
-              {/* Timer */}
-              <div className={`test-timer ${timeRemaining <= 300 ? 'pulse-glow' : ''}`}>
-                <FaClock className="mr-2" />
-                {formatTime(timeRemaining)}
-              </div>
-              
-              {/* Progress */}
-              <div className="text-sm text-gray-600">
-                Question {currentQuestionIndex + 1} of {questions.length}
-              </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <div className="text-sm text-gray-500">Time Remaining</div>
+              <div className="text-lg font-bold text-red-600">{formatTime(timeRemaining)}</div>
             </div>
           </div>
         </div>

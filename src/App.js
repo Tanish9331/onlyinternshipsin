@@ -20,7 +20,7 @@ import TermsAgreement from './components/common/TermsAgreement';
 import TermsAndConditions from './components/common/TermsAndConditions';
 import PaymentPage from './components/payment/PaymentPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import CustomCursor from './components/common/CustomCursor';
+import DevTools from './components/common/DevTools';
 
 // Styles
 import './index.css';
@@ -30,8 +30,8 @@ function App() {
     <Router>
       <AuthProvider>
         <TestProvider>
-          <div className="App min-h-screen bg-gradient-to-br from-amber-50 to-yellow-100 font-poppins">
-            <CustomCursor />
+          {/* Main App Content */}
+          <div className="App">
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
@@ -116,6 +116,9 @@ function App() {
                 } 
               />
             </Routes>
+            
+            {/* DevTools - Always Available */}
+            <DevTools />
             
             {/* Toast Notifications */}
             <Toaster
