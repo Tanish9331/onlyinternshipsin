@@ -119,6 +119,13 @@ export const AuthProvider = ({ children }) => {
           console.log('Attempting login with email:', email);
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           console.log('Login successful for user:', userCredential.user.email);
+          
+          // Check email verification
+          if (!userCredential.user.emailVerified) {
+            console.log('User email not verified');
+            throw new Error('Please verify your email address before accessing the dashboard. Check your inbox for the verification link.');
+          }
+          
           return userCredential.user;
         } catch (error) {
           attempts++;
@@ -366,6 +373,8 @@ export const AuthProvider = ({ children }) => {
         return 'This operation requires recent authentication. Please log in again.';
       case 'auth/invalid-credential':
         return 'Invalid email or password. Please check your credentials and try again.';
+      case 'auth/email-not-verified':
+        return 'Please verify your email address before accessing the dashboard. Check your inbox for the verification link.';
       default:
         return 'An error occurred. Please try again.';
     }

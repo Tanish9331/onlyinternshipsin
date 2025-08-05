@@ -55,7 +55,13 @@ const StudentLogin = () => {
       console.error('Authentication error:', error);
       console.error('Error code:', error.code);
       console.error('Error message:', error.message);
-      toast.error(error.message || 'Authentication failed');
+      
+      // Handle email verification error specifically
+      if (error.message.includes('verify your email')) {
+        toast.error('Email not verified. Please check your inbox and click the verification link.');
+      } else {
+        toast.error(error.message || 'Authentication failed');
+      }
     }
   };
 
