@@ -44,7 +44,7 @@ const StudentLogin = () => {
         console.log('Creating new account...');
         await signup(email, password, fullName);
         toast.success('Account created successfully! Please check your email for verification.');
-        navigate('/student/dashboard');
+        navigate('/email-verification');
       } else {
         console.log('Attempting login...');
         await login(email, password);
@@ -57,8 +57,9 @@ const StudentLogin = () => {
       console.error('Error message:', error.message);
       
       // Handle email verification error specifically
-      if (error.message.includes('verify your email')) {
+      if (error.message === 'EMAIL_NOT_VERIFIED') {
         toast.error('Email not verified. Please check your inbox and click the verification link.');
+        navigate('/email-verification');
       } else {
         toast.error(error.message || 'Authentication failed');
       }

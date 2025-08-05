@@ -61,8 +61,14 @@ export const AuthProvider = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Force refresh user to get latest email verification status
+        await user.reload();
+        setUser(user);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
       setError(null);
     }, (error) => {
@@ -71,7 +77,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    // Add global debug functions
+        // Add global debug functions
     window.debugAuth = {
       testConnection: async () => {
         const { testFirebaseConnection } = await import('../firebase.js');
@@ -97,7 +103,7 @@ export const AuthProvider = ({ children }) => {
 
     // Cleanup subscription on unmount
     return unsubscribe;
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Login with email and password
   const login = async (email, password) => {
@@ -123,7 +129,7 @@ export const AuthProvider = ({ children }) => {
           // Check email verification
           if (!userCredential.user.emailVerified) {
             console.log('User email not verified');
-            throw new Error('Please verify your email address before accessing the dashboard. Check your inbox for the verification link.');
+            throw new Error('EMAIL_NOT_VERIFIED');
           }
           
           return userCredential.user;
@@ -338,6 +344,26 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   };
 
+  // Refresh user verification status
+  const refreshUserVerification = async () => {
+    try {
+      if (user) {
+        await user.reload();
+        // Get the updated user object
+        const updatedUser = auth.currentUser;
+        if (updatedUser) {
+          setUser(updatedUser);
+          console.log('User verification status updated:', updatedUser.emailVerified);
+          return updatedUser.emailVerified;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error('Error refreshing user verification:', error);
+      return false;
+    }
+  };
+
   // Helper function to get user-friendly error messages
   const getErrorMessage = (errorCode) => {
     switch (errorCode) {
@@ -371,19 +397,18 @@ export const AuthProvider = ({ children }) => {
         return 'An account already exists with the same email but different sign-in credentials.';
       case 'auth/requires-recent-login':
         return 'This operation requires recent authentication. Please log in again.';
-      case 'auth/invalid-credential':
-        return 'Invalid email or password. Please check your credentials and try again.';
       case 'auth/email-not-verified':
+      case 'EMAIL_NOT_VERIFIED':
         return 'Please verify your email address before accessing the dashboard. Check your inbox for the verification link.';
       default:
         return 'An error occurred. Please try again.';
     }
   };
 
-  // Check if user is offline
-  const isOffline = () => {
-    return !navigator.onLine;
-  };
+  // Check if user is offline (unused but kept for future use)
+  // const isOffline = () => {
+  //   return !navigator.onLine;
+  // };
 
   // Test authentication setup
   const testAuthSetup = async () => {
@@ -391,7 +416,7 @@ export const AuthProvider = ({ children }) => {
       console.log('🧪 Testing authentication setup...');
       
       // Import debug function
-      const { debugAuthIssue, testFirebaseConnection } = await import('../firebase.js');
+      const { testFirebaseConnection } = await import('../firebase.js');
       
       // Test Firebase connection
       const connectionOk = await testFirebaseConnection();
@@ -425,6 +450,7 @@ export const AuthProvider = ({ children }) => {
     updatePassword: updateUserPassword,
     deleteAccount: deleteUserAccount,
     clearError,
+    refreshUserVerification,
     isAuthenticated: !!user,
     isEmailVerified: user?.emailVerified || false,
     isOnline: isOnline,

@@ -8,6 +8,7 @@ import { TestProvider } from './contexts/TestContext';
 import HomePage from './components/HomePage';
 import StudentLogin from './components/auth/StudentLogin';
 import AdminLogin from './components/auth/AdminLogin';
+import EmailVerification from './components/auth/EmailVerification';
 import StudentDashboard from './components/student/StudentDashboard';
 import StudentProfile from './components/student/StudentProfile';
 import StudentPerformance from './components/student/StudentPerformance';
@@ -37,6 +38,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/student/login" element={<StudentLogin />} />
               <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/email-verification" element={<EmailVerification />} />
               <Route path="/terms" element={<TermsAgreement />} />
               <Route path="/terms-conditions" element={<TermsAndConditions />} />
               

@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const ProtectedRoute = ({ children, userType }) => {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading, isEmailVerified } = useAuth();
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -20,6 +20,11 @@ const ProtectedRoute = ({ children, userType }) => {
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/student/login" replace />;
+  }
+
+  // Check email verification for students (not admins)
+  if (userType === 'student' && !isEmailVerified) {
+    return <Navigate to="/email-verification" replace />;
   }
 
   // Check if user has required role (if specified)
