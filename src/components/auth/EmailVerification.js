@@ -11,6 +11,7 @@ const EmailVerification = () => {
   const { user, sendVerification, logout, isEmailVerified, refreshUserVerification } = useAuth();
   const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [isChecking, setIsChecking] = useState(false);
 
   // Check if user is verified every 3 seconds
   useEffect(() => {
@@ -19,23 +20,33 @@ const EmailVerification = () => {
       return;
     }
 
-    if (isEmailVerified) {
-      toast.success('Email verified successfully!');
-      navigate('/student/dashboard');
-      return;
-    }
-
-    const interval = setInterval(async () => {
+    // Check verification status immediately
+    const checkVerification = async () => {
+      if (isChecking) return; // Prevent multiple simultaneous checks
+      
       try {
-        // Force refresh user to get latest verification status
-        await refreshUserVerification();
+        setIsChecking(true);
+        const isVerified = await refreshUserVerification();
+        if (isVerified) {
+          toast.success('Email verified successfully!');
+          navigate('/student/dashboard');
+          return;
+        }
       } catch (error) {
-        console.error('Error refreshing user:', error);
+        console.error('Error checking verification:', error);
+      } finally {
+        setIsChecking(false);
       }
-    }, 3000);
+    };
+
+    // Check immediately
+    checkVerification();
+
+    // Set up interval for periodic checks
+    const interval = setInterval(checkVerification, 3000);
 
     return () => clearInterval(interval);
-  }, [user, isEmailVerified, navigate]);
+  }, [user, navigate, refreshUserVerification]);
 
   // Countdown timer for resend button
   useEffect(() => {
@@ -51,6 +62,7 @@ const EmailVerification = () => {
       await sendVerification();
       setCountdown(60); // 60 second cooldown
       toast.success('Verification email sent! Check your inbox.');
+      // Don't navigate - stay on this page
     } catch (error) {
       toast.error('Failed to send verification email. Please try again.');
     } finally {
@@ -127,7 +139,12 @@ const EmailVerification = () => {
             {/* Loading Indicator */}
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
               <FaSpinner className="w-4 h-4 animate-spin" />
-              <span>Checking verification status...</span>
+              <span>
+                {isChecking 
+                  ? 'Checking verification status...' 
+                  : 'Auto-checking verification status every 3 seconds...'
+                }
+              </span>
             </div>
 
             {/* Action Buttons */}
@@ -154,10 +171,39 @@ const EmailVerification = () => {
               </button>
 
               <button
-                onClick={refreshUserVerification}
-                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                onClick={async () => {
+                  if (isChecking) return;
+                  
+                  try {
+                    setIsChecking(true);
+                    const isVerified = await refreshUserVerification();
+                    if (isVerified) {
+                      toast.success('Email verified! Redirecting to dashboard...');
+                      navigate('/student/dashboard');
+                    } else {
+                      toast.info('Email not verified yet. Please check your inbox and click the verification link.');
+                    }
+                  } catch (error) {
+                    toast.error('Failed to check verification status. Please try again.');
+                  } finally {
+                    setIsChecking(false);
+                  }
+                }}
+                disabled={isChecking}
+                className={`w-full px-4 py-2 rounded-lg transition-colors ${
+                  isChecking
+                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
               >
-                Check Verification Status
+                {isChecking ? (
+                  <span className="flex items-center justify-center">
+                    <FaSpinner className="w-4 h-4 animate-spin mr-2" />
+                    Checking...
+                  </span>
+                ) : (
+                  'Check Verification Status'
+                )}
               </button>
 
               <button

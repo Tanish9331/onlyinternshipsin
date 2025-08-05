@@ -65,7 +65,9 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         // Force refresh user to get latest email verification status
         await user.reload();
-        setUser(user);
+        // Get the updated user object after reload
+        const updatedUser = auth.currentUser;
+        setUser(updatedUser || user);
       } else {
         setUser(null);
       }
@@ -349,10 +351,18 @@ export const AuthProvider = ({ children }) => {
     try {
       if (user) {
         await user.reload();
-        setUser(user);
+        // Get the updated user object
+        const updatedUser = auth.currentUser;
+        if (updatedUser) {
+          setUser(updatedUser);
+          console.log('User verification status updated:', updatedUser.emailVerified);
+          return updatedUser.emailVerified;
+        }
       }
+      return false;
     } catch (error) {
       console.error('Error refreshing user verification:', error);
+      return false;
     }
   };
 

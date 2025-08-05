@@ -23,7 +23,7 @@ const ProtectedRoute = ({ children, userType }) => {
   }
 
   // Check email verification for students (not admins)
-  if (userType === 'student' && !isEmailVerified) {
+  if (userType === 'student' && user && !user.emailVerified) {
     return <Navigate to="/email-verification" replace />;
   }
 
