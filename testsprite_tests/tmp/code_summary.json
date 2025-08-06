@@ -1,0 +1,449 @@
+{
+  "tech_stack": [
+    "JavaScript",
+    "React",
+    "Firebase",
+    "TailwindCSS",
+    "React Router",
+    "React Hot Toast",
+    "React Icons",
+    "Axios"
+  ],
+  "features": [
+    {
+      "name": "User Authentication",
+      "description": "Email-based OTP authentication system for students and admin login",
+      "files": [
+        "src/components/auth/StudentLogin.js",
+        "src/components/auth/AdminLogin.js",
+        "src/components/auth/EmailVerification.js",
+        "src/contexts/AuthContext.js",
+        "src/firebase.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "User Authentication API",
+          "version": "1.0.0",
+          "description": "Authentication system using Firebase and email OTP"
+        },
+        "paths": {
+          "/student/login": {
+            "post": {
+              "summary": "Student login with email OTP",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/admin/login": {
+            "post": {
+              "summary": "Admin login with username/password",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string"
+                        },
+                        "password": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Test Management",
+      "description": "Comprehensive test interface with 35 questions, timer, and anti-cheating features",
+      "files": [
+        "src/components/test/TestInterface.js",
+        "src/components/test/TestResults.js",
+        "src/components/test/TestInitializer.js",
+        "src/components/test/TestDebug.js",
+        "src/contexts/TestContext.js",
+        "src/utils/timer.js",
+        "src/utils/questionBank.js",
+        "src/utils/antiCheating.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Test Management API",
+          "version": "1.0.0",
+          "description": "Test interface with questions, timer, and anti-cheating"
+        },
+        "paths": {
+          "/test/start": {
+            "post": {
+              "summary": "Start a new test session",
+              "responses": {
+                "200": {
+                  "description": "Test started successfully",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "testId": {
+                            "type": "string"
+                          },
+                          "questions": {
+                            "type": "array"
+                          },
+                          "duration": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/test/submit": {
+            "post": {
+              "summary": "Submit test answers",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "testId": {
+                          "type": "string"
+                        },
+                        "answers": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Payment Integration",
+      "description": "Razorpay payment gateway integration with GST compliance",
+      "files": [
+        "src/components/payment/PaymentPage.js",
+        "src/utils/razorpay.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Payment API",
+          "version": "1.0.0",
+          "description": "Razorpay payment integration with GST"
+        },
+        "paths": {
+          "/payment/create": {
+            "post": {
+              "summary": "Create payment order",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "number"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "default": "INR"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/payment/verify": {
+            "post": {
+              "summary": "Verify payment signature",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "razorpay_payment_id": {
+                          "type": "string"
+                        },
+                        "razorpay_signature": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Student Dashboard",
+      "description": "Student dashboard with profile management, performance tracking, and test history",
+      "files": [
+        "src/components/student/StudentDashboard.js",
+        "src/components/student/StudentProfile.js",
+        "src/components/student/StudentPerformance.js",
+        "src/components/student/StudentNavigation.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Student Dashboard API",
+          "version": "1.0.0",
+          "description": "Student dashboard and profile management"
+        },
+        "paths": {
+          "/student/dashboard": {
+            "get": {
+              "summary": "Get student dashboard data",
+              "responses": {
+                "200": {
+                  "description": "Dashboard data retrieved",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "profile": {
+                            "type": "object"
+                          },
+                          "testHistory": {
+                            "type": "array"
+                          },
+                          "performance": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Admin Dashboard",
+      "description": "Admin dashboard for managing students, tests, and viewing analytics",
+      "files": [
+        "src/components/admin/AdminDashboard.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Admin Dashboard API",
+          "version": "1.0.0",
+          "description": "Admin dashboard and management features"
+        },
+        "paths": {
+          "/admin/dashboard": {
+            "get": {
+              "summary": "Get admin dashboard data",
+              "responses": {
+                "200": {
+                  "description": "Admin dashboard data retrieved",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "totalStudents": {
+                            "type": "number"
+                          },
+                          "totalTests": {
+                            "type": "number"
+                          },
+                          "recentResults": {
+                            "type": "array"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Email Service",
+      "description": "Email service for OTP verification, test results, and notifications",
+      "files": [
+        "src/utils/emailService.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Email Service API",
+          "version": "1.0.0",
+          "description": "Email notifications and OTP service"
+        },
+        "paths": {
+          "/email/send-otp": {
+            "post": {
+              "summary": "Send OTP to email",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/email/send-results": {
+            "post": {
+              "summary": "Send test results to student",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string"
+                        },
+                        "results": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Data Export",
+      "description": "Export functionality for test results, merit lists, and user data",
+      "files": [
+        "src/utils/exportUtils.js",
+        "src/utils/downloadUtils.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Data Export API",
+          "version": "1.0.0",
+          "description": "Export data in various formats"
+        },
+        "paths": {
+          "/export/results": {
+            "get": {
+              "summary": "Export test results",
+              "parameters": [
+                {
+                  "name": "format",
+                  "in": "query",
+                  "schema": {
+                    "type": "string",
+                    "enum": ["csv", "excel", "json"]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Home Page",
+      "description": "Landing page with hero section, features, pricing, and navigation",
+      "files": [
+        "src/components/HomePage.js",
+        "src/components/Hero.js",
+        "src/components/Features.js",
+        "src/components/Pricing.js",
+        "src/components/Header.js",
+        "src/components/Footer.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Home Page API",
+          "version": "1.0.0",
+          "description": "Landing page and navigation"
+        },
+        "paths": {
+          "/": {
+            "get": {
+              "summary": "Get home page content",
+              "responses": {
+                "200": {
+                  "description": "Home page content",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "hero": {
+                            "type": "object"
+                          },
+                          "features": {
+                            "type": "array"
+                          },
+                          "pricing": {
+                            "type": "array"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+} 

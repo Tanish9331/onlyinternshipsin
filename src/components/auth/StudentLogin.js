@@ -4,16 +4,20 @@ import { useAuth } from '../../contexts/AuthContext';
 import { FaArrowLeft, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import YugaYatraLogo from '../common/YugaYatraLogo';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import { GoogleSignInSection } from './GoogleSignInButton';
+import { validatePassword } from '../../utils/passwordValidation';
 
 const StudentLogin = () => {
   const navigate = useNavigate();
-  const { login, signup, loading, error, clearError, isOnline, testAuthSetup } = useAuth();
+  const { login, signup, signInWithGoogle, loading, error, clearError, isOnline, testAuthSetup } = useAuth();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
+  const [showPasswordStrength, setShowPasswordStrength] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,9 +33,19 @@ const StudentLogin = () => {
       return;
     }
 
-    if (!password || password.length < 6) {
-      toast.error('Password must be at least 6 characters long');
-      return;
+    // Enhanced password validation for signup
+    if (isSignup) {
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.isValid) {
+        toast.error('Please fix the password requirements before continuing.');
+        return;
+      }
+    } else {
+      // Basic validation for login
+      if (!password || password.length < 6) {
+        toast.error('Password must be at least 6 characters long');
+        return;
+      }
     }
 
     try {
@@ -69,6 +83,7 @@ const StudentLogin = () => {
   const toggleMode = () => {
     setIsSignup(!isSignup);
     clearError();
+    setShowPasswordStrength(false);
   };
 
   const testFirebaseConnection = async () => {
@@ -83,6 +98,87 @@ const StudentLogin = () => {
     } catch (error) {
       console.error('Firebase test error:', error);
       toast.error('Firebase test failed: ' + error.message);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    
+    // Show password strength indicator for signup when user starts typing
+    if (isSignup && newPassword.length > 0) {
+      setShowPasswordStrength(true);
+    } else if (newPassword.length === 0) {
+      setShowPasswordStrength(false);
+    }
+  };
+
+  /**
+   * Handles Google Sign-In with comprehensive error handling
+   * and user-friendly feedback
+   */
+  const handleGoogleSignIn = async () => {
+    if (!isOnline) {
+      toast.error('No internet connection. Please check your network and try again.');
+      return;
+    }
+
+    try {
+      clearError();
+      console.log('🔍 Starting Google Sign-In process...');
+      
+      const user = await signInWithGoogle();
+      
+      console.log('✅ Google Sign-In successful:', {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        emailVerified: user.emailVerified
+      });
+      
+      toast.success(`Welcome${user.displayName ? `, ${user.displayName}` : ''}!`);
+      
+      // Navigate based on email verification status
+      if (user.emailVerified) {
+        navigate('/student/dashboard');
+      } else {
+        // Google accounts are typically pre-verified, but handle edge case
+        navigate('/email-verification');
+      }
+      
+    } catch (error) {
+      console.error('Google Sign-In error:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      
+      // Handle specific Google Sign-In errors with user-friendly messages
+      let errorMessage = 'Failed to sign in with Google. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/popup-closed-by-user':
+        case 'auth/cancelled-popup-request':
+          errorMessage = 'Google Sign-in was cancelled. Please try again if you want to continue.';
+          break;
+        case 'auth/popup-blocked':
+          errorMessage = 'Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        case 'auth/unauthorized-domain':
+          errorMessage = 'This domain is not authorized for Google Sign-in. Please contact support.';
+          break;
+        case 'auth/operation-not-supported-in-this-environment':
+          errorMessage = 'Google Sign-in is not supported in this browser. Please try a different browser.';
+          break;
+        case 'auth/account-exists-with-different-credential':
+          errorMessage = 'An account already exists with this email using a different sign-in method. Please try signing in with email and password.';
+          break;
+        default:
+          errorMessage = error.message || 'Failed to sign in with Google. Please try again.';
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -185,7 +281,7 @@ const StudentLogin = () => {
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                   className="input-field pl-10 pr-10"
                   placeholder="Enter your password"
                 />
@@ -201,6 +297,11 @@ const StudentLogin = () => {
                   )}
                 </button>
               </div>
+              
+              {/* Password Strength Indicator - Only show for signup */}
+              {isSignup && showPasswordStrength && (
+                <PasswordStrengthIndicator password={password} />
+              )}
             </div>
 
             {error && (
@@ -222,6 +323,14 @@ const StudentLogin = () => {
               {loading ? 'Processing...' : (isSignup ? 'Create Account' : 'Sign In')}
             </button>
           </form>
+
+          {/* Google Sign-In Section */}
+          <GoogleSignInSection
+            onGoogleSignIn={handleGoogleSignIn}
+            loading={loading}
+            disabled={loading}
+            showDivider={true}
+          />
 
           {/* Toggle between login and signup */}
           <div className="mt-6 text-center">

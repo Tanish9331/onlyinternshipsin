@@ -1,0 +1,321 @@
+{
+  "projectName": "onlyinternships_backend",
+  "projectPath": "D:\\onlyinternships_backend",
+  "testType": "frontend",
+  "localPort": 3000,
+  "baseUrl": "http://localhost:3000",
+  "tests": [
+    {
+      "id": "test_001",
+      "name": "Home Page Load Test",
+      "description": "Test if the home page loads correctly with all components",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/",
+          "description": "Navigate to home page"
+        },
+        {
+          "action": "waitForElement",
+          "selector": "h1",
+          "description": "Wait for main heading to load"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".hero-section",
+          "description": "Verify hero section is present"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".features-section",
+          "description": "Verify features section is present"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".pricing-section",
+          "description": "Verify pricing section is present"
+        }
+      ]
+    },
+    {
+      "id": "test_002",
+      "name": "Student Login Flow",
+      "description": "Test the complete student login flow with email OTP",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/student/login",
+          "description": "Navigate to student login page"
+        },
+        {
+          "action": "waitForElement",
+          "selector": "input[type='email']",
+          "description": "Wait for email input to load"
+        },
+        {
+          "action": "type",
+          "selector": "input[type='email']",
+          "value": "test@example.com",
+          "description": "Enter test email"
+        },
+        {
+          "action": "click",
+          "selector": "button[type='submit']",
+          "description": "Click send OTP button"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".otp-input",
+          "description": "Wait for OTP input to appear"
+        }
+      ]
+    },
+    {
+      "id": "test_003",
+      "name": "Admin Login Test",
+      "description": "Test admin login functionality",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/admin/login",
+          "description": "Navigate to admin login page"
+        },
+        {
+          "action": "waitForElement",
+          "selector": "input[name='username']",
+          "description": "Wait for username input to load"
+        },
+        {
+          "action": "type",
+          "selector": "input[name='username']",
+          "value": "admin",
+          "description": "Enter admin username"
+        },
+        {
+          "action": "type",
+          "selector": "input[name='password']",
+          "value": "admin",
+          "description": "Enter admin password"
+        },
+        {
+          "action": "click",
+          "selector": "button[type='submit']",
+          "description": "Click login button"
+        }
+      ]
+    },
+    {
+      "id": "test_004",
+      "name": "Test Interface Navigation",
+      "description": "Test navigation to test interface and basic functionality",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/student/test-init",
+          "description": "Navigate to test initializer"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".test-init-container",
+          "description": "Wait for test init container to load"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".test-rules",
+          "description": "Verify test rules are displayed"
+        },
+        {
+          "action": "click",
+          "selector": "button[data-testid='start-test']",
+          "description": "Click start test button"
+        }
+      ]
+    },
+    {
+      "id": "test_005",
+      "name": "Payment Page Test",
+      "description": "Test payment page functionality",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/student/payment",
+          "description": "Navigate to payment page"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".payment-container",
+          "description": "Wait for payment container to load"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".payment-amount",
+          "description": "Verify payment amount is displayed"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".razorpay-button",
+          "description": "Verify Razorpay button is present"
+        }
+      ]
+    },
+    {
+      "id": "test_006",
+      "name": "Student Dashboard Test",
+      "description": "Test student dashboard functionality",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/student/dashboard",
+          "description": "Navigate to student dashboard"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".dashboard-container",
+          "description": "Wait for dashboard to load"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".student-info",
+          "description": "Verify student info is displayed"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".test-history",
+          "description": "Verify test history section is present"
+        }
+      ]
+    },
+    {
+      "id": "test_007",
+      "name": "Admin Dashboard Test",
+      "description": "Test admin dashboard functionality",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/admin/dashboard",
+          "description": "Navigate to admin dashboard"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".admin-dashboard",
+          "description": "Wait for admin dashboard to load"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".student-management",
+          "description": "Verify student management section is present"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".test-analytics",
+          "description": "Verify test analytics section is present"
+        }
+      ]
+    },
+    {
+      "id": "test_008",
+      "name": "Responsive Design Test",
+      "description": "Test responsive design on different screen sizes",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/",
+          "description": "Navigate to home page"
+        },
+        {
+          "action": "setViewport",
+          "width": 375,
+          "height": 667,
+          "description": "Set mobile viewport"
+        },
+        {
+          "action": "assertElementVisible",
+          "selector": ".mobile-menu",
+          "description": "Verify mobile menu is visible"
+        },
+        {
+          "action": "setViewport",
+          "width": 1024,
+          "height": 768,
+          "description": "Set tablet viewport"
+        },
+        {
+          "action": "assertElementVisible",
+          "selector": ".desktop-menu",
+          "description": "Verify desktop menu is visible"
+        }
+      ]
+    },
+    {
+      "id": "test_009",
+      "name": "Error Handling Test",
+      "description": "Test error handling and user feedback",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/student/login",
+          "description": "Navigate to student login"
+        },
+        {
+          "action": "type",
+          "selector": "input[type='email']",
+          "value": "invalid-email",
+          "description": "Enter invalid email"
+        },
+        {
+          "action": "click",
+          "selector": "button[type='submit']",
+          "description": "Click submit"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".error-message",
+          "description": "Wait for error message"
+        },
+        {
+          "action": "assertElementExists",
+          "selector": ".error-message",
+          "description": "Verify error message is displayed"
+        }
+      ]
+    },
+    {
+      "id": "test_010",
+      "name": "Navigation Test",
+      "description": "Test navigation between different pages",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "/",
+          "description": "Start at home page"
+        },
+        {
+          "action": "click",
+          "selector": "a[href='/student/login']",
+          "description": "Click student login link"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".login-container",
+          "description": "Wait for login page to load"
+        },
+        {
+          "action": "click",
+          "selector": "a[href='/']",
+          "description": "Click back to home"
+        },
+        {
+          "action": "waitForElement",
+          "selector": ".hero-section",
+          "description": "Wait for home page to load"
+        }
+      ]
+    }
+  ],
+  "config": {
+    "timeout": 30000,
+    "retries": 2,
+    "screenshotOnFailure": true,
+    "videoRecording": true
+  }
+} 

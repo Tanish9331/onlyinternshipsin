@@ -252,27 +252,79 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
+      
+      console.log('🔄 Sending password reset email to:', email);
       await sendPasswordResetEmail(auth, email);
+      console.log('✅ Password reset email sent successfully');
+      
     } catch (error) {
       console.error('Password reset error:', error);
-      setError(getErrorMessage(error.code));
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      
+      // Don't set error state for security - let component handle messaging
+      // This prevents revealing whether an account exists or not
       throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  // Google sign in
+
+
+  // Google sign in with enhanced configuration
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
       setError(null);
+      
+      console.log('🔄 Initiating Google Sign-In...');
+      
+      // Configure Google Auth Provider
       const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      return userCredential.user;
+      
+      // Add additional scopes if needed
+      provider.addScope('email');
+      provider.addScope('profile');
+      
+      // Set custom parameters
+      provider.setCustomParameters({
+        prompt: 'select_account', // Always show account selection
+        client_id: '464746808135-a4d18mle232elcqa8o40nk4fdmjaibd3.apps.googleusercontent.com'
+      });
+      
+      // Use signInWithPopup for better UX (fallback to redirect if needed)
+      let userCredential;
+      try {
+        userCredential = await signInWithPopup(auth, provider);
+      } catch (popupError) {
+        console.warn('Popup blocked or failed, trying redirect...', popupError);
+        // If popup fails, could implement redirect flow here
+        throw popupError;
+      }
+      
+      console.log('✅ Google Sign-In successful');
+      
+      // Optional: Extract additional Google user info
+      const credential = GoogleAuthProvider.credentialFromResult(userCredential);
+      const token = credential?.accessToken;
+      const user = userCredential.user;
+      
+      console.log('Google user info:', {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        emailVerified: user.emailVerified
+      });
+      
+      return user;
     } catch (error) {
       console.error('Google sign in error:', error);
-      setError(getErrorMessage(error.code));
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      
+      // Don't set error state - let component handle specific messaging
       throw error;
     } finally {
       setLoading(false);
@@ -379,6 +431,8 @@ export const AuthProvider = ({ children }) => {
         return 'An account with this email already exists.';
       case 'auth/weak-password':
         return 'Password should be at least 6 characters long.';
+      case 'auth/password-does-not-meet-requirements':
+        return 'Password does not meet the required criteria. Please ensure your password contains at least one uppercase letter, one lowercase letter, one number, and one special character.';
       case 'auth/invalid-email':
         return 'Please enter a valid email address.';
       case 'auth/too-many-requests':
@@ -390,11 +444,15 @@ export const AuthProvider = ({ children }) => {
       case 'auth/network-request-failed':
         return 'Network connection failed. Please check your internet connection and try again.';
       case 'auth/popup-closed-by-user':
-        return 'Sign-in was cancelled.';
+        return 'Google Sign-in was cancelled. Please try again.';
       case 'auth/cancelled-popup-request':
-        return 'Sign-in was cancelled.';
+        return 'Google Sign-in was cancelled. Please try again.';
       case 'auth/popup-blocked':
-        return 'Pop-up was blocked by browser. Please allow pop-ups for this site.';
+        return 'Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.';
+      case 'auth/unauthorized-domain':
+        return 'This domain is not authorized for Google Sign-in. Please contact support.';
+      case 'auth/operation-not-supported-in-this-environment':
+        return 'Google Sign-in is not supported in this environment. Please try a different browser.';
       case 'auth/account-exists-with-different-credential':
         return 'An account already exists with the same email but different sign-in credentials.';
       case 'auth/requires-recent-login':

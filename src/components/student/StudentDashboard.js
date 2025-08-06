@@ -137,7 +137,7 @@ const StudentDashboard = () => {
                   </div>
                   <button
                     onClick={handleProfileUpdate}
-                    className="btn-primary w-full"
+                    className="btn-primary w-full flex items-center justify-center"
                   >
                     <FaCheck className="mr-2" />
                     Save Profile

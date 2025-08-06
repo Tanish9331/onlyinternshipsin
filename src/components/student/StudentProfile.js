@@ -346,7 +346,7 @@ const StudentProfile = () => {
                             input.value = '';
                           }
                         }}
-                        className="btn-secondary px-4"
+                        className="btn-secondary px-4 flex items-center justify-center"
                       >
                         Add
                       </button>
@@ -394,7 +394,7 @@ const StudentProfile = () => {
                   
                   <button
                     onClick={handleProfileUpdate}
-                    className="btn-primary w-full"
+                    className="btn-primary w-full flex items-center justify-center"
                   >
                     <FaCheck className="mr-2" />
                     Save Profile
@@ -565,12 +565,12 @@ const StudentProfile = () => {
                         </div>
                         
                         <div className="flex space-x-2">
-                          <button className="btn-outline text-sm px-3 py-1">
+                          <button className="btn-outline text-sm px-3 py-1 flex items-center justify-center">
                             <FaEye className="mr-1" />
                             View Details
                           </button>
                           {test.isPassed && (
-                            <button className="btn-secondary text-sm px-3 py-1">
+                            <button className="btn-secondary text-sm px-3 py-1 flex items-center justify-center">
                               <FaDownload className="mr-1" />
                               Certificate
                             </button>

@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "backendAuthType": "basic token",
+  "backendUsername": "tanishsahu9331@gmail.com",
+  "backendPassword": "123456",
+  "executionArgs": {
+    "projectName": "onlyinternships_backend",
+    "projectPath": "D:\\onlyinternships_backend",
+    "testIds": [],
+    "additionalInstruction": "Execute the frontend test plan for the OnlyInternship.in React application, focusing on user authentication, test interface, payment integration, and admin dashboard functionality.",
+    "envs": {
+      "API_KEY": ""
+    }
+  }
+}
